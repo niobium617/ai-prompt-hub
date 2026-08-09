@@ -5,31 +5,34 @@ import api from '@/api';
 export const useUserStore = defineStore('user', () => {
   const user = ref<any>(null);
   const token = ref(localStorage.getItem('accessToken') || '');
+  const inited = ref(false);
 
   const isLoggedIn = computed(() => !!token.value);
   const isAdmin = computed(() => user.value?.role === 'admin' || user.value?.role === 'super_admin');
 
+  async function init() {
+    if (token.value) {
+      try {
+        user.value = await api.get('/user/profile');
+      } catch { logout(); }
+    }
+    inited.value = true;
+  }
+
   async function login(email: string, password: string) {
     const res = await api.post('/auth/login', { email, password });
-    token.value = res.data.accessToken;
-    localStorage.setItem('accessToken', res.data.accessToken);
-    localStorage.setItem('refreshToken', res.data.refreshToken);
-    await fetchProfile();
+    token.value = res.accessToken;
+    localStorage.setItem('accessToken', res.accessToken);
+    localStorage.setItem('refreshToken', res.refreshToken);
+    user.value = await api.get('/user/profile');
   }
 
   async function register(username: string, email: string, password: string) {
     const res = await api.post('/auth/register', { username, email, password });
-    token.value = res.data.accessToken;
-    localStorage.setItem('accessToken', res.data.accessToken);
-    localStorage.setItem('refreshToken', res.data.refreshToken);
-    await fetchProfile();
-  }
-
-  async function fetchProfile() {
-    try {
-      const res = await api.get('/user/profile');
-      user.value = res.data;
-    } catch { logout(); }
+    token.value = res.accessToken;
+    localStorage.setItem('accessToken', res.accessToken);
+    localStorage.setItem('refreshToken', res.refreshToken);
+    user.value = await api.get('/user/profile');
   }
 
   function logout() {
@@ -39,5 +42,5 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('refreshToken');
   }
 
-  return { user, token, isLoggedIn, isAdmin, login, register, fetchProfile, logout };
+  return { user, token, inited, isLoggedIn, isAdmin, init, login, register, logout };
 });

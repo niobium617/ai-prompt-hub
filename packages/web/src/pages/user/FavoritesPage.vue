@@ -7,7 +7,7 @@ const favorites = ref<any[]>([]);
 
 onMounted(async () => {
   const res = await api.get('/user/favorites');
-  favorites.value = res.data.items;
+  favorites.value = res.items;
 });
 </script>
 

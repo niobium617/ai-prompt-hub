@@ -13,9 +13,9 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-// 响应拦截：统一错误处理 + Token刷新
+// 响应拦截：提取 data + Token刷新
 api.interceptors.response.use(
-  res => res.data,
+  res => res.data,  // 直接返回后端响应体
   async error => {
     const original = error.config;
     if (error.response?.status === 401 && !original._retry) {
@@ -23,9 +23,10 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem('refreshToken');
       if (refreshToken) {
         try {
-          const res = await axios.post('/api/v1/auth/refresh', { refreshToken });
-          localStorage.setItem('accessToken', res.data.data.accessToken);
-          original.headers.Authorization = `Bearer ${res.data.data.accessToken}`;
+          const refreshRes = await axios.post('/api/v1/auth/refresh', { refreshToken });
+          const newToken = refreshRes.data.accessToken;
+          localStorage.setItem('accessToken', newToken);
+          original.headers.Authorization = `Bearer ${newToken}`;
           return api(original);
         } catch { /* refresh failed */ }
       }

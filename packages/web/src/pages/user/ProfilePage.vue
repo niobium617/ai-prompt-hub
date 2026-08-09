@@ -15,7 +15,7 @@ onMounted(async () => {
   nickname.value = userStore.user?.nickname || '';
   bio.value = userStore.user?.bio || '';
   const res = await api.get('/user/prompts', { params: { page: 1, pageSize: 10 } });
-  myPrompts.value = res.data.items;
+  myPrompts.value = res.items;
 });
 
 async function onSave() {

@@ -16,9 +16,9 @@ onMounted(async () => {
     api.get('/prompts/featured', { params: { limit: 6 } }),
     api.get('/categories'),
   ]);
-  hotPrompts.value = hotRes.data;
-  featuredPrompts.value = featRes.data;
-  categories.value = catRes.data;
+  hotPrompts.value = hotRes;
+  featuredPrompts.value = featRes;
+  categories.value = catRes;
 });
 
 function onSearch() {

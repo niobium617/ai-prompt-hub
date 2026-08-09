@@ -16,8 +16,8 @@ onMounted(async () => {
     api.get('/categories'),
     api.get('/tools'),
   ]);
-  categories.value = catRes.data;
-  aiTools.value = toolRes.data.filter((t: any) => t.category === 'text');
+  categories.value = catRes;
+  aiTools.value = toolRes.filter((t: any) => t.category === 'text');
 });
 
 async function onGenerate() {
@@ -29,7 +29,7 @@ async function onGenerate() {
       description: description.value,
       toolName: selectedTool.value || '通用AI',
     });
-    result.value = res.data;
+    result.value = res;
   } finally { loading.value = false; }
 }
 

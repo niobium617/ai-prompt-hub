@@ -16,8 +16,8 @@ async function fetchData() {
     api.get('/admin/prompts/pending'),
     api.get('/admin/stats'),
   ]);
-  pendingPrompts.value = pRes.data.items;
-  stats.value = sRes.data;
+  pendingPrompts.value = pRes.items;
+  stats.value = sRes;
 }
 
 async function approve(id: number) {

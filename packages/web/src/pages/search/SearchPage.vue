@@ -19,8 +19,8 @@ async function doSearch() {
   loading.value = true;
   try {
     const res = await api.get('/search', { params: { keyword: keyword.value, page: page.value } });
-    prompts.value = res.data.items;
-    total.value = res.data.total;
+    prompts.value = res.items;
+    total.value = res.total;
   } finally { loading.value = false; }
 }
 
@@ -32,7 +32,7 @@ watch(keyword, (val) => {
   if (!val) { suggestions.value = []; return; }
   debounceTimer = setTimeout(async () => {
     const res = await api.get('/search/suggestions', { params: { keyword: val } });
-    suggestions.value = res.data;
+    suggestions.value = res;
   }, 300);
 });
 </script>

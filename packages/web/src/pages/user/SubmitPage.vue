@@ -19,8 +19,8 @@ onMounted(async () => {
     api.get('/categories'),
     api.get('/tools'),
   ]);
-  categories.value = catRes.data;
-  aiTools.value = toolRes.data;
+  categories.value = catRes;
+  aiTools.value = toolRes;
 });
 
 function flattenCats(cats: any[]): any[] {

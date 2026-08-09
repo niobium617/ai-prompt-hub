@@ -9,7 +9,7 @@ const article = ref<any>(null);
 
 onMounted(async () => {
   const res = await api.get(`/articles/${route.params.id}`);
-  article.value = res.data;
+  article.value = res;
 });
 </script>
 

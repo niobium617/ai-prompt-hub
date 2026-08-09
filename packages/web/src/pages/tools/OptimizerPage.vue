@@ -16,7 +16,7 @@ async function onOptimize() {
       originalPrompt: originalPrompt.value,
       style: style.value,
     });
-    result.value = res.data;
+    result.value = res;
   } finally { loading.value = false; }
 }
 

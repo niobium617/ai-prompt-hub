@@ -15,13 +15,13 @@ const userRating = ref(0);
 onMounted(async () => {
   const id = route.params.id as string;
   const res = await api.get(`/prompts/${id}`);
-  prompt.value = res.data;
+  prompt.value = res;
   fetchComments();
 });
 
 async function fetchComments() {
   const res = await api.get('/comments', { params: { targetType: 'prompt', targetId: route.params.id } });
-  comments.value = res.data.items;
+  comments.value = res.items;
 }
 
 async function onCopy() {

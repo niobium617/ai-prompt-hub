@@ -16,7 +16,7 @@ const loading = ref(false);
 
 onMounted(async () => {
   const catRes = await api.get('/categories');
-  categories.value = catRes.data;
+  categories.value = catRes;
   categoryId.value = Number(route.query.categoryId) || undefined;
   fetchPrompts();
 });
@@ -29,8 +29,8 @@ async function fetchPrompts() {
     const res = await api.get('/prompts', {
       params: { page: page.value, pageSize: 12, categoryId: categoryId.value, difficulty: difficulty.value, sort: sort.value },
     });
-    prompts.value = res.data.items;
-    total.value = res.data.total;
+    prompts.value = res.items;
+    total.value = res.total;
   } finally {
     loading.value = false;
   }
