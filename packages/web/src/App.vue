@@ -28,8 +28,8 @@ const userStore = useUserStore();
             <router-link to="/tools/optimizer" class="text-gray-600 hover:text-primary-600 transition text-sm">
               优化器
             </router-link>
-            <router-link to="/resources" class="text-gray-600 hover:text-primary-600 transition text-sm">
-              📦 资源
+            <router-link to="/tutorials" class="text-gray-600 hover:text-primary-600 transition text-sm">
+              📖 教程
             </router-link>
           </nav>
         </div>
@@ -77,7 +77,7 @@ const userStore = useUserStore();
             <div class="space-y-2">
               <router-link to="/prompts" class="block text-gray-500 hover:text-primary-600">提示词广场</router-link>
               <router-link to="/skills" class="block text-gray-500 hover:text-primary-600">Prompt技巧</router-link>
-              <router-link to="/resources" class="block text-gray-500 hover:text-primary-600">AI资源</router-link>
+              <router-link to="/tutorials" class="block text-gray-500 hover:text-primary-600">AI工具教程</router-link>
             </div>
           </div>
           <div>

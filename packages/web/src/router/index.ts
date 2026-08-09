@@ -89,10 +89,10 @@ const router = createRouter({
       meta: { title: 'Prompt 技巧大全' },
     },
     {
-      path: '/resources',
-      name: 'resources',
-      component: () => import('../pages/resources/ResourcesPage.vue'),
-      meta: { title: 'AI 资源与开源项目' },
+      path: '/tutorials',
+      name: 'tutorials',
+      component: () => import('../pages/tutorials/TutorialsPage.vue'),
+      meta: { title: 'AI 工具使用教程' },
     },
     {
       path: '/:pathMatch(.*)*',
