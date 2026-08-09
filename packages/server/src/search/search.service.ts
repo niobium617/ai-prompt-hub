@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class SearchService {
   constructor(private prisma: PrismaService) {}
 
   async search(keyword: string, page = 1, pageSize = 12) {
-    const where: Prisma.PromptWhereInput = {
+    const p = Number(page) || 1 || 1;
+    const ps = Number(pageSize) || 12 || 12;
+    const skip = (p - 1) * ps;
+    const take = ps;
+    const where = {
       status: 2,
       OR: [
         { title: { contains: keyword } },
@@ -19,16 +22,19 @@ export class SearchService {
     const [items, total] = await Promise.all([
       this.prisma.prompt.findMany({
         where,
-        skip: (+page - 1) * +pageSize,
-        take: +pageSize,
-        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' } as any,
         include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true } } },
       }),
       this.prisma.prompt.count({ where }),
     ]);
 
     return {
-      items: items.map(p => ({ ...p, id: Number(p.id), categoryId: Number(p.categoryId), author: { ...p.author, id: Number(p.author.id) } })),
+      items: items.map(p => ({
+        ...p, id: Number(p.id), categoryId: Number(p.categoryId),
+        author: { ...p.author, id: Number(p.author.id) },
+      })),
       total, page, pageSize,
     };
   }

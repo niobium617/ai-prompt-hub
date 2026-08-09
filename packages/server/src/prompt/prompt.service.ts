@@ -31,8 +31,8 @@ export class PromptService {
     const [items, total] = await Promise.all([
       this.prisma.prompt.findMany({
         where,
-        skip: (+page - 1) * +pageSize,
-        take: +pageSize,
+        skip: ((Number(page) || 1) - 1) * (Number(pageSize) || 12),
+        take: (Number(pageSize) || 12),
         orderBy,
         include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true } } },
       }),
@@ -49,7 +49,7 @@ export class PromptService {
       ratingAvg: Number(p.ratingAvg),
     }));
 
-    return { items: mappedItems, total, page: +page, pageSize: +pageSize, totalPages: Math.ceil(total / +pageSize) };
+    return { items: mappedItems, total, page: Number(page) || 1, pageSize: Number(pageSize) || 12, totalPages: Math.ceil(total / Number(pageSize) || 12) };
   }
 
   async findById(id: number) {

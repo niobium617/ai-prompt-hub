@@ -30,6 +30,6 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '我的投稿' })
   getMyPrompts(@Request() req: any, @Query('page') page = 1, @Query('pageSize') pageSize = 10) {
-    return this.userService.getMyPrompts(req.user.id, +page, +pageSize);
+    return this.userService.getMyPrompts(req.user.id, Number(page) || 1, Number(pageSize) || 10);
   }
 }

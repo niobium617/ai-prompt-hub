@@ -15,7 +15,7 @@ export class AdminService {
     this.checkAdmin(userRole);
     const where = { status: 1 };
     const [items, total] = await Promise.all([
-      this.prisma.prompt.findMany({ where, skip: (+page - 1) * +pageSize, take: +pageSize, orderBy: { createdAt: 'desc' }, include: { category: true, author: { select: { id: true, nickname: true } } } }),
+      this.prisma.prompt.findMany({ where, skip: ((Number(page) || 1) - 1) * (Number(pageSize) || 12), take: (Number(pageSize) || 12), orderBy: { createdAt: 'desc' }, include: { category: true, author: { select: { id: true, nickname: true } } } }),
       this.prisma.prompt.count({ where }),
     ]);
     return { items: items.map(p => ({ ...p, id: Number(p.id), categoryId: Number(p.categoryId) })), total, page, pageSize };

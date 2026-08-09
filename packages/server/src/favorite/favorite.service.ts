@@ -6,17 +6,19 @@ export class FavoriteService {
   constructor(private prisma: PrismaService) {}
 
   async findByUser(userId: number, page = 1, pageSize = 20) {
+    const p = Number(page) || 1;
+    const ps = Number(pageSize) || 20;
     const where = { userId: userId };
     const [items, total] = await Promise.all([
       this.prisma.favorite.findMany({
         where,
-        skip: (+page - 1) * +pageSize,
-        take: +pageSize,
+        skip: (p - 1) * ps,
+        take: ps,
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.favorite.count({ where }),
     ]);
-    return { items: items.map(f => ({ ...f, id: Number(f.id), userId: Number(f.userId) })), total, page, pageSize };
+    return { items: items.map(f => ({ ...f, id: Number(f.id), userId: Number(f.userId) })), total, page: p, pageSize: ps };
   }
 
   async add(userId: number, targetType: string, targetId: number) {

@@ -11,8 +11,8 @@ export class CommentService {
     const [items, total] = await Promise.all([
       this.prisma.comment.findMany({
         where,
-        skip: (+page - 1) * +pageSize,
-        take: +pageSize,
+        skip: ((Number(page) || 1) - 1) * (Number(pageSize) || 12),
+        take: (Number(pageSize) || 12),
         orderBy: { createdAt: 'desc' },
         include: {
           user: { select: { id: true, nickname: true, avatarUrl: true } },
