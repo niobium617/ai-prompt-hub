@@ -15,13 +15,22 @@ export class AiToolController {
 
   @Post('prompt-generator')
   @ApiOperation({ summary: 'Prompt生成器' })
-  generate(@Body() body: { category: string; description: string; toolName: string }) {
-    return this.aiToolService.generatePrompt(body.category, body.description, body.toolName);
+  generate(@Body() body: {
+    category: string;
+    description: string;
+    toolName: string;
+    style?: string;
+  }) {
+    return this.aiToolService.generatePrompt(body);
   }
 
   @Post('prompt-optimizer')
   @ApiOperation({ summary: 'Prompt优化器' })
-  optimize(@Body() body: { originalPrompt: string; style?: string }) {
-    return this.aiToolService.optimizePrompt(body.originalPrompt, body.style);
+  optimize(@Body() body: {
+    originalPrompt: string;
+    style?: string;
+    targetTool?: string;
+  }) {
+    return this.aiToolService.optimizePrompt(body);
   }
 }
