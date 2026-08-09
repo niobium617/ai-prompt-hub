@@ -1,0 +1,8 @@
+<view class="container login-page">
+  <view class="login-card">
+    <view class="logo">🚀 AI Prompt Hub</view>
+    <input class="input" placeholder="邮箱" value="{{email}}" bindinput="onInput" data-field="email" />
+    <input class="input" type="password" placeholder="密码" value="{{password}}" bindinput="onInput" data-field="password" />
+    <button class="btn" loading="{{loading}}" bindtap="onLogin">登录</button>
+  </view>
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "分类",
+  "usingComponents": {
+    "prompt-card": "/components/prompt-card/prompt-card"
+  }
+}

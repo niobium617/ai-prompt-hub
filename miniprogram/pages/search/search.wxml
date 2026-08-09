@@ -1,0 +1,13 @@
+<view class="container">
+  <view class="search-box">
+    <input placeholder="搜索提示词..." value="{{keyword}}" bindinput="onInput" bindconfirm="doSearch" focus />
+    <button bindtap="doSearch">搜索</button>
+  </view>
+  <view wx:if="{{searched && !prompts.length}}" class="empty-state">
+    <text class="icon">🔍</text><text>未找到相关提示词</text>
+  </view>
+  <view wx:for="{{prompts}}" wx:key="id" class="card" bindtap="onTap" data-id="{{item.id}}">
+    <view class="card-title">{{item.title}}</view>
+    <view class="card-desc">{{item.description}}</view>
+  </view>
+</view>

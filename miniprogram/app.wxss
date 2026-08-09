@@ -1,0 +1,57 @@
+/* 全局样式 */
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  font-size: 14px;
+}
+
+.container {
+  padding: 16rpx 24rpx;
+}
+
+/* 通用样式 */
+.text-primary { color: #3b82f6; }
+.text-gray { color: #999; }
+.text-sm { font-size: 24rpx; }
+.text-lg { font-size: 32rpx; }
+.font-bold { font-weight: bold; }
+
+.bg-white {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+/* 卡片 */
+.card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+
+/* Tag */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  margin-right: 12rpx;
+}
+.tag-primary { background: #eff6ff; color: #3b82f6; }
+.tag-success { background: #f0fdf4; color: #22c55e; }
+.tag-warning { background: #fffbeb; color: #f59e0b; }
+.tag-danger { background: #fef2f2; color: #ef4444; }
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  color: #999;
+}
+.empty-state .icon { font-size: 80rpx; margin-bottom: 24rpx; }

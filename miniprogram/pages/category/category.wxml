@@ -1,0 +1,14 @@
+<view class="category-page">
+  <scroll-view scroll-y class="left-panel">
+    <view wx:for="{{categories}}" wx:key="id"
+      class="cat-item {{selectedId === item.id ? 'active' : ''}}"
+      data-id="{{item.id}}" bindtap="onSelectCat">{{item.name}}</view>
+  </scroll-view>
+  <scroll-view scroll-y class="right-panel">
+    <prompt-card wx:for="{{prompts}}" wx:key="id" prompt="{{item}}" />
+    <view wx:if="{{!prompts.length && !loading}}" class="empty-state">
+      <text class="icon">📭</text>
+      <text>暂无提示词</text>
+    </view>
+  </scroll-view>
+</view>

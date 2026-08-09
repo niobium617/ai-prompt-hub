@@ -1,0 +1,8 @@
+<view class="container">
+  <view class="section-title">🔥 热门标签</view>
+  <view class="tag-cloud">
+    <text wx:for="{{tags}}" wx:key="id" class="tag-item">{{item.name}}</text>
+  </view>
+  <view class="section-title">📈 最新热门</view>
+  <prompt-card wx:for="{{hotPrompts}}" wx:key="id" prompt="{{item}}" />
+</view>

@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-data/
+
+# Prisma
+packages/server/prisma/migrations/
+!packages/server/prisma/migrations/.gitkeep
+
+# Uploads
+uploads/
+packages/server/uploads/
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+
+# Miniprogram
+miniprogram/node_modules/
+miniprogram/miniprogram_npm/
+
+# Temp
+temp/
+tmp/
+*.tmp

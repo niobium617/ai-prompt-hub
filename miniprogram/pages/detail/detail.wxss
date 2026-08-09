@@ -1,0 +1,15 @@
+.tags { margin-bottom: 16rpx; }
+.title { font-size: 36rpx; font-weight: bold; margin-bottom: 16rpx; }
+.desc { color: #666; margin-bottom: 16rpx; font-size: 28rpx; }
+.meta { display: flex; gap: 24rpx; font-size: 24rpx; color: #999; }
+.prompt-content { margin-top: 16rpx; }
+.section-title { font-size: 30rpx; font-weight: bold; margin-bottom: 16rpx; }
+.code-block {
+  background: #1e293b; color: #4ade80; padding: 24rpx; border-radius: 12rpx;
+  font-size: 26rpx; line-height: 1.6; white-space: pre-wrap; margin-bottom: 24rpx;
+}
+.btn-primary { background: #3b82f6; color: #fff; margin-bottom: 12rpx; }
+.btn-outline { background: #fff; color: #3b82f6; border: 2rpx solid #3b82f6; }
+.comment-item { border-bottom: 1rpx solid #f0f0f0; padding: 20rpx 0; }
+.comment-user { font-size: 26rpx; font-weight: 500; margin-bottom: 8rpx; }
+.comment-text { font-size: 28rpx; color: #666; }

@@ -1,0 +1,20 @@
+{
+  "name": "ai-prompt-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Prompt Hub - AI提示词社区分享平台",
+  "scripts": {
+    "dev:server": "pnpm --filter @ai-prompt-hub/server dev",
+    "dev:web": "pnpm --filter @ai-prompt-hub/web dev",
+    "build:server": "pnpm --filter @ai-prompt-hub/server build",
+    "build:web": "pnpm --filter @ai-prompt-hub/web build",
+    "db:migrate": "pnpm --filter @ai-prompt-hub/server db:migrate",
+    "db:seed": "pnpm --filter @ai-prompt-hub/server db:seed",
+    "db:studio": "pnpm --filter @ai-prompt-hub/server db:studio",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

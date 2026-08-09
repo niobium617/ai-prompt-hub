@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "AI Prompt Hub",
+  "usingComponents": {
+    "prompt-card": "/components/prompt-card/prompt-card"
+  }
+}

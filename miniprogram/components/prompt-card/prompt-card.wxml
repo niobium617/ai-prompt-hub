@@ -1,0 +1,17 @@
+<view class="card" bindtap="onTap">
+  <view class="card-header">
+    <view class="card-title">{{prompt.title}}</view>
+    <view class="tag tag-{{prompt.difficulty === 1 ? 'success' : prompt.difficulty === 2 ? 'warning' : 'danger'}}">
+      {{prompt.difficulty === 1 ? '入门' : prompt.difficulty === 2 ? '进阶' : '高级'}}
+    </view>
+  </view>
+  <view class="card-desc">{{prompt.description}}</view>
+  <view class="card-footer">
+    <text class="text-sm text-gray">📁 {{prompt.category?.name || '未分类'}}</text>
+    <view class="card-stats">
+      <text>👁 {{prompt.viewCount}}</text>
+      <text>⭐ {{prompt.ratingAvg}}</text>
+      <text>❤ {{prompt.favoriteCount}}</text>
+    </view>
+  </view>
+</view>

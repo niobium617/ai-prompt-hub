@@ -1,0 +1,29 @@
+<view wx:if="{{prompt}}" class="container">
+  <view class="bg-white">
+    <view class="tags">
+      <text class="tag tag-primary">{{prompt.category?.name}}</text>
+    </view>
+    <view class="title">{{prompt.title}}</view>
+    <view class="desc">{{prompt.description}}</view>
+    <view class="meta">
+      <text>👁 {{prompt.viewCount}}</text>
+      <text>⭐ {{prompt.ratingAvg}}</text>
+      <text>❤ {{prompt.favoriteCount}}</text>
+    </view>
+  </view>
+
+  <view class="bg-white prompt-content">
+    <view class="section-title">📝 Prompt 内容</view>
+    <view class="code-block">{{prompt.content}}</view>
+    <button class="btn-primary" bindtap="onCopy">📋 一键复制</button>
+    <button class="btn-outline" bindtap="onFavorite">❤️ 收藏</button>
+  </view>
+
+  <view class="bg-white">
+    <view class="section-title">💬 评论 ({{comments.length}})</view>
+    <view wx:for="{{comments}}" wx:key="id" class="comment-item">
+      <view class="comment-user">{{item.user?.nickname}}</view>
+      <view class="comment-text">{{item.content}}</view>
+    </view>
+  </view>
+</view>

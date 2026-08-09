@@ -1,0 +1,5 @@
+.category-page { display: flex; height: 100vh; }
+.left-panel { width: 200rpx; background: #fff; }
+.cat-item { padding: 28rpx 20rpx; font-size: 28rpx; color: #666; border-left: 4rpx solid transparent; }
+.cat-item.active { color: #3b82f6; background: #eff6ff; border-left-color: #3b82f6; font-weight: 500; }
+.right-panel { flex: 1; padding: 12rpx; background: #f5f7fa; }

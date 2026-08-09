@@ -1,0 +1,49 @@
+<!-- 搜索栏 -->
+<view class="search-bar">
+  <view class="search-input" bindtap="onSearch">
+    <text class="search-icon">🔍</text>
+    <text class="search-placeholder">搜索提示词...</text>
+  </view>
+</view>
+
+<!-- Banner -->
+<view class="banner">
+  <view class="banner-title">发现高质量的 AI 提示词</view>
+  <view class="banner-desc">汇集最实用的 Prompt，让每个人都能用好 AI</view>
+</view>
+
+<!-- 分类入口 -->
+<view class="section-title">📂 分类浏览</view>
+<view class="category-grid">
+  <view
+    wx:for="{{categories}}" wx:key="id"
+    class="category-item"
+    data-id="{{item.id}}"
+    bindtap="onTapCategory"
+  >
+    <text class="category-icon">{{item.name === '写作创作' ? '✏️' : item.name === '编程开发' ? '💻' : item.name === '设计创意' ? '🎨' : item.name === '营销推广' ? '📢' : item.name === '数据分析' ? '📊' : '📚'}}</text>
+    <text class="category-name">{{item.name}}</text>
+  </view>
+</view>
+
+<!-- 精选推荐 -->
+<view class="section-title">⭐ 精选推荐</view>
+<view class="prompt-list">
+  <prompt-card
+    wx:for="{{featuredPrompts}}" wx:key="id"
+    prompt="{{item}}"
+    bindtap="onTapPrompt"
+    data-id="{{item.id}}"
+  />
+</view>
+
+<!-- 热门提示词 -->
+<view class="section-title">🔥 热门提示词</view>
+<view class="prompt-list">
+  <prompt-card
+    wx:for="{{hotPrompts}}" wx:key="id"
+    prompt="{{item}}"
+    bindtap="onTapPrompt"
+    data-id="{{item.id}}"
+  />
+</view>
