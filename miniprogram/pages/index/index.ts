@@ -1,48 +1,45 @@
 import { api } from '../../utils/request';
 
+const app = getApp<IAppOption>();
+
 Page({
   data: {
-    searchKeyword: '',
-    banners: [
-      { title: '发现高质量AI提示词', desc: '汇集最实用的Prompt' },
-    ],
+    keyword: '',
     categories: [] as any[],
     hotPrompts: [] as any[],
     featuredPrompts: [] as any[],
   },
 
-  onLoad() {
-    this.fetchData();
-  },
-
-  onPullDownRefresh() {
-    this.fetchData().then(() => wx.stopPullDownRefresh());
-  },
+  onLoad() { this.fetchData(); },
+  onShow() { this.fetchData(); },
+  onPullDownRefresh() { this.fetchData().then(() => wx.stopPullDownRefresh()); },
 
   async fetchData() {
     try {
-      const [hotRes, featRes, catRes] = await Promise.all([
+      const [hot, feat, cats] = await Promise.all([
         api.get('/prompts/hot', { limit: 6 }),
         api.get('/prompts/featured', { limit: 6 }),
         api.get('/categories'),
       ]);
-      this.setData({ hotPrompts: hotRes, featuredPrompts: featRes, categories: catRes });
-    } catch { /* error handled in request */ }
+      this.setData({ hotPrompts: hot as any[], featuredPrompts: feat as any[], categories: cats as any[] });
+    } catch { /* handled in request */ }
   },
 
   onSearch() {
-    if (this.data.searchKeyword.trim()) {
-      wx.navigateTo({ url: `/pages/search/search?keyword=${this.data.searchKeyword}` });
-    }
+    const kw = this.data.keyword.trim();
+    if (kw) wx.navigateTo({ url: `/pages/search/search?keyword=${kw}` });
   },
 
-  onTapCategory(e: any) {
-    const id = e.currentTarget.dataset.id;
-    wx.switchTab({ url: `/pages/category/category?id=${id}` });
+  goCategory(e: any) {
+    wx.switchTab({ url: '/pages/category/category' });
   },
 
-  onTapPrompt(e: any) {
+  goDetail(e: any) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/detail/detail?id=${id}` });
+  },
+
+  goTools() {
+    wx.navigateTo({ url: '/pages/tools/tools' });
   },
 });

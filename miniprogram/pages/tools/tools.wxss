@@ -1,0 +1,22 @@
+.page { min-height: 100vh; background: #f5f7fa; }
+.tabs { display: flex; background: #fff; padding: 8rpx 24rpx; }
+.tab { flex: 1; text-align: center; padding: 20rpx 0; font-size: 28rpx; color: #999; border-bottom: 4rpx solid transparent; transition: .2s; }
+.tab.active { color: #3b82f6; border-bottom-color: #3b82f6; font-weight: 600; }
+
+.panel { padding: 24rpx; }
+.form-item { margin-bottom: 24rpx; }
+.label { font-size: 28rpx; font-weight: 600; margin-bottom: 12rpx; color: #333; }
+.picker { background: #fff; border-radius: 12rpx; padding: 20rpx; font-size: 28rpx; color: #333; }
+textarea, input { background: #fff; border-radius: 12rpx; padding: 20rpx; width: 100%; min-height: 120rpx; font-size: 28rpx; box-sizing: border-box; }
+input { min-height: auto; }
+
+.radio-group { display: flex; gap: 16rpx; }
+.radio { padding: 14rpx 32rpx; border-radius: 10rpx; background: #fff; font-size: 26rpx; color: #666; }
+.radio.on { background: #eff6ff; color: #3b82f6; font-weight: 600; }
+
+.btn { background: #3b82f6; color: #fff; border-radius: 12rpx; margin-top: 8rpx; font-size: 30rpx; }
+.btn-copy { background: #fff; color: #3b82f6; border: 2rpx solid #3b82f6; border-radius: 12rpx; margin-top: 16rpx; font-size: 28rpx; }
+
+.result { margin-top: 32rpx; }
+.result-label { font-size: 24rpx; color: #999; margin-bottom: 12rpx; }
+.code-block { background: #1e293b; color: #4ade80; border-radius: 12rpx; padding: 24rpx; font-size: 26rpx; line-height: 1.6; max-height: 600rpx; overflow-y: auto; white-space: pre-wrap; }

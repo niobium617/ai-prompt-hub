@@ -1,8 +1,27 @@
-<view class="container">
-  <view class="section-title">🔥 热门标签</view>
-  <view class="tag-cloud">
-    <text wx:for="{{tags}}" wx:key="id" class="tag-item">{{item.name}}</text>
+<view class="page">
+  <view class="section">
+    <view class="section-title">🔥 热门标签</view>
+    <view class="tag-cloud">
+      <text class="tag" wx:for="{{tags}}" wx:key="id" bindtap="goSearch" data-tag="{{item.name}}">{{item.name}}</text>
+    </view>
   </view>
-  <view class="section-title">📈 最新热门</view>
-  <prompt-card wx:for="{{hotPrompts}}" wx:key="id" prompt="{{item}}" />
+
+  <view class="section">
+    <view class="section-title">📈 最新上线</view>
+    <view wx:if="{{newPrompts.length===0}}" class="empty">暂无数据</view>
+    <view class="card" wx:for="{{newPrompts}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="card-title">{{item.title}}</view>
+      <view class="card-desc">{{item.description}}</view>
+      <view class="card-foot">📁 {{item.category?.name}} · {{item.createdAt?.slice(0,10)}}</view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">🏆 热度排行</view>
+    <view class="card" wx:for="{{hotPrompts}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="rank">#{{index+1}}</view>
+      <view class="card-title">{{item.title}}</view>
+      <view class="card-foot">👁 {{item.viewCount}} · ⭐ {{item.ratingAvg}}</view>
+    </view>
+  </view>
 </view>

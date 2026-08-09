@@ -1,20 +1,25 @@
 import { api } from '../../utils/request';
 
 Page({
-  data: { keyword: '', prompts: [] as any[], suggestions: [] as any[], total: 0, searched: false },
+  data: {
+    keyword: '',
+    results: [] as any[],
+    total: 0,
+    suggestions: [] as any[],
+    searched: false,
+  },
   onLoad(options: any) {
     if (options.keyword) { this.setData({ keyword: options.keyword }); this.doSearch(); }
   },
   async doSearch() {
     if (!this.data.keyword.trim()) return;
     this.setData({ searched: true });
-    const res = await api.get('/search', { keyword: this.data.keyword });
-    this.setData({ prompts: res.items, total: res.total });
+    try {
+      const res: any = await api.get('/search', { keyword: this.data.keyword });
+      this.setData({ results: res?.items || [], total: res?.total || 0 });
+    } catch { }
   },
-  onInput(e: any) {
-    const keyword = e.detail.value;
-    this.setData({ keyword });
-    if (keyword) api.get('/search/suggestions', { keyword }).then(r => this.setData({ suggestions: r }));
-    else this.setData({ suggestions: [] });
+  goDetail(e: any) {
+    wx.navigateTo({ url: `/pages/detail/detail?id=${e.currentTarget.dataset.id}` });
   },
 });

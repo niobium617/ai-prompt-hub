@@ -8,8 +8,8 @@
     "pages/search/search",
     "pages/favorites/favorites",
     "pages/tools/tools",
-    "pages/login/login",
-    "pages/submit/submit"
+    "pages/submit/submit",
+    "pages/login/login"
   ],
   "window": {
     "navigationBarBackgroundColor": "#3b82f6",
@@ -21,32 +21,12 @@
     "color": "#999999",
     "selectedColor": "#3b82f6",
     "backgroundColor": "#ffffff",
-    "borderStyle": "black",
+    "borderStyle": "white",
     "list": [
-      {
-        "pagePath": "pages/index/index",
-        "text": "首页",
-        "iconPath": "images/tab/home.png",
-        "selectedIconPath": "images/tab/home-active.png"
-      },
-      {
-        "pagePath": "pages/category/category",
-        "text": "分类",
-        "iconPath": "images/tab/category.png",
-        "selectedIconPath": "images/tab/category-active.png"
-      },
-      {
-        "pagePath": "pages/discover/discover",
-        "text": "发现",
-        "iconPath": "images/tab/discover.png",
-        "selectedIconPath": "images/tab/discover-active.png"
-      },
-      {
-        "pagePath": "pages/profile/profile",
-        "text": "我的",
-        "iconPath": "images/tab/profile.png",
-        "selectedIconPath": "images/tab/profile-active.png"
-      }
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/category/category", "text": "分类" },
+      { "pagePath": "pages/discover/discover", "text": "发现" },
+      { "pagePath": "pages/profile/profile", "text": "我的" }
     ]
   },
   "style": "v2",

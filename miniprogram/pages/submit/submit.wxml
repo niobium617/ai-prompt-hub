@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="form">
+    <view class="form-item">
+      <view class="label">标题 <text class="req">*</text></view>
+      <input placeholder="给提示词起个名字" value="{{title}}" bindinput="onTitle" maxlength="200" />
+    </view>
+    <view class="form-item">
+      <view class="label">描述</view>
+      <textarea placeholder="简要描述用途（可选）" value="{{description}}" bindinput="onDesc" maxlength="500" />
+    </view>
+    <view class="form-item">
+      <view class="label">分类 <text class="req">*</text></view>
+      <picker mode="selector" range="{{categories}}" range-key="name" bindchange="onCatChange">
+        <view class="picker">{{categories[catIndex]?.name || '请选择'}}</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="label">难度</view>
+      <picker mode="selector" range="{{['入门','进阶','高级']}}" bindchange="onDiffChange">
+        <view class="picker">{{['入门','进阶','高级'][difficulty-1]}}</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="label">Prompt 内容 <text class="req">*</text></view>
+      <textarea placeholder="粘贴完整的 Prompt 内容..." value="{{content}}" bindinput="onContent" maxlength="10000" style="min-height:240rpx" />
+    </view>
+    <button class="btn" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">📤 提交审核</button>
+  </view>
+</view>

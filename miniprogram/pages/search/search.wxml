@@ -1,13 +1,20 @@
-<view class="container">
-  <view class="search-box">
-    <input placeholder="搜索提示词..." value="{{keyword}}" bindinput="onInput" bindconfirm="doSearch" focus />
-    <button bindtap="doSearch">搜索</button>
+<view class="page">
+  <view class="search-bar">
+    <input placeholder="搜索提示词..." value="{{keyword}}" bindinput="onInput" bindconfirm="doSearch" confirm-type="search" focus />
+    <button class="btn" bindtap="doSearch">搜索</button>
   </view>
-  <view wx:if="{{searched && !prompts.length}}" class="empty-state">
-    <text class="icon">🔍</text><text>未找到相关提示词</text>
-  </view>
-  <view wx:for="{{prompts}}" wx:key="id" class="card" bindtap="onTap" data-id="{{item.id}}">
-    <view class="card-title">{{item.title}}</view>
-    <view class="card-desc">{{item.description}}</view>
+  <view wx:if="{{searched}}">
+    <view wx:if="{{results.length===0}}" class="empty">
+      <view class="empty-icon">🔍</view>
+      <view>未找到 "{{keyword}}" 相关结果</view>
+    </view>
+    <view wx:else>
+      <view class="total">共 {{total}} 条</view>
+      <view class="card" wx:for="{{results}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="card-title">{{item.title}}</view>
+        <view class="card-desc">{{item.description}}</view>
+        <view class="card-foot">📁 {{item.category?.name}} · ⭐ {{item.ratingAvg}}</view>
+      </view>
+    </view>
   </view>
 </view>

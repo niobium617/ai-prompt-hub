@@ -1,49 +1,67 @@
-<!-- 搜索栏 -->
-<view class="search-bar">
-  <view class="search-input" bindtap="onSearch">
-    <text class="search-icon">🔍</text>
-    <text class="search-placeholder">搜索提示词...</text>
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-box" bindtap="onSearch">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索提示词..." value="{{keyword}}" bindinput="onInput" bindconfirm="onSearch" confirm-type="search" />
+    </view>
   </view>
-</view>
 
-<!-- Banner -->
-<view class="banner">
-  <view class="banner-title">发现高质量的 AI 提示词</view>
-  <view class="banner-desc">汇集最实用的 Prompt，让每个人都能用好 AI</view>
-</view>
-
-<!-- 分类入口 -->
-<view class="section-title">📂 分类浏览</view>
-<view class="category-grid">
-  <view
-    wx:for="{{categories}}" wx:key="id"
-    class="category-item"
-    data-id="{{item.id}}"
-    bindtap="onTapCategory"
-  >
-    <text class="category-icon">{{item.name === '写作创作' ? '✏️' : item.name === '编程开发' ? '💻' : item.name === '设计创意' ? '🎨' : item.name === '营销推广' ? '📢' : item.name === '数据分析' ? '📊' : '📚'}}</text>
-    <text class="category-name">{{item.name}}</text>
+  <!-- Banner -->
+  <view class="banner">
+    <view class="banner-title">发现高质量 AI 提示词</view>
+    <view class="banner-desc">汇集最实用的 Prompt，让每个人都能用好 AI</view>
   </view>
-</view>
 
-<!-- 精选推荐 -->
-<view class="section-title">⭐ 精选推荐</view>
-<view class="prompt-list">
-  <prompt-card
-    wx:for="{{featuredPrompts}}" wx:key="id"
-    prompt="{{item}}"
-    bindtap="onTapPrompt"
-    data-id="{{item.id}}"
-  />
-</view>
+  <!-- 分类入口 -->
+  <view class="section">
+    <view class="section-title">📂 分类浏览</view>
+    <scroll-view scroll-x class="category-scroll">
+      <view class="cat-item" wx:for="{{categories}}" wx:key="id" bindtap="goCategory" data-id="{{item.id}}">
+        <view class="cat-icon">{{item.name === '写作创作' ? '✏️' : item.name === '编程开发' ? '💻' : item.name === '设计创意' ? '🎨' : item.name === '营销推广' ? '📢' : item.name === '数据分析' ? '📊' : '📚'}}</view>
+        <view class="cat-name">{{item.name}}</view>
+      </view>
+    </scroll-view>
+  </view>
 
-<!-- 热门提示词 -->
-<view class="section-title">🔥 热门提示词</view>
-<view class="prompt-list">
-  <prompt-card
-    wx:for="{{hotPrompts}}" wx:key="id"
-    prompt="{{item}}"
-    bindtap="onTapPrompt"
-    data-id="{{item.id}}"
-  />
+  <!-- 工具入口 -->
+  <view class="tool-entry" bindtap="goTools">
+    <text class="tool-icon">🛠️</text>
+    <text class="tool-text">Prompt 生成器 & 优化器</text>
+    <text class="tool-arrow">→</text>
+  </view>
+
+  <!-- 精选推荐 -->
+  <view class="section">
+    <view class="section-header">
+      <view class="section-title">⭐ 精选推荐</view>
+    </view>
+    <view wx:if="{{featuredPrompts.length === 0}}" class="empty">暂无精选</view>
+    <view wx:else class="prompt-list">
+      <view class="card" wx:for="{{featuredPrompts}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="card-header">
+          <view class="card-title">{{item.title}}</view>
+          <view class="tag tag-{{item.difficulty === 1 ? 'green' : item.difficulty === 2 ? 'orange' : 'red'}}">{{item.difficulty === 1 ? '入门' : item.difficulty === 2 ? '进阶' : '高级'}}</view>
+        </view>
+        <view class="card-desc">{{item.description}}</view>
+        <view class="card-foot">📁 {{item.category?.name || '-'}}  ⭐ {{item.ratingAvg}}  👁 {{item.viewCount}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门 -->
+  <view class="section">
+    <view class="section-title">🔥 热门提示词</view>
+    <view wx:if="{{hotPrompts.length === 0}}" class="empty">暂无数据</view>
+    <view wx:else class="prompt-list">
+      <view class="card" wx:for="{{hotPrompts}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="card-header">
+          <view class="card-title">{{item.title}}</view>
+          <view class="tag tag-{{item.difficulty === 1 ? 'green' : item.difficulty === 2 ? 'orange' : 'red'}}">{{item.difficulty === 1 ? '入门' : item.difficulty === 2 ? '进阶' : '高级'}}</view>
+        </view>
+        <view class="card-desc">{{item.description}}</view>
+        <view class="card-foot">📁 {{item.category?.name || '-'}}  ⭐ {{item.ratingAvg}}  ❤ {{item.favoriteCount}}</view>
+      </view>
+    </view>
+  </view>
 </view>

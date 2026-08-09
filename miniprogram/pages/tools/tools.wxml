@@ -1,0 +1,59 @@
+<view class="page">
+  <!-- Tabs -->
+  <view class="tabs">
+    <view class="tab {{tab==='generator'?'active':''}}" bindtap="switchTab" data-tab="generator">⚡ 生成器</view>
+    <view class="tab {{tab==='optimizer'?'active':''}}" bindtap="switchTab" data-tab="optimizer">🔧 优化器</view>
+  </view>
+
+  <!-- Generator -->
+  <view wx:if="{{tab==='generator'}}" class="panel">
+    <view class="form-item">
+      <view class="label">场景分类</view>
+      <picker mode="selector" range="{{categories}}" range-key="name" bindchange="onCatChange">
+        <view class="picker">{{selectedCat || '请选择'}}</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="label">需求描述</view>
+      <textarea placeholder="描述你想要完成的任务..." value="{{description}}" bindinput="onDescInput" maxlength="500" />
+    </view>
+    <view class="form-item">
+      <view class="label">目标工具</view>
+      <input value="{{selectedTool}}" bindinput="onToolInput" placeholder="ChatGPT / Claude / 通用AI" />
+    </view>
+    <button class="btn" bindtap="onGenerate" loading="{{genLoading}}" disabled="{{genLoading}}">⚡ 生成 Prompt</button>
+
+    <view wx:if="{{genResult}}" class="result">
+      <view class="result-label">✨ {{genResult.meta.model}} · {{genResult.versions.length}}个版本</view>
+      <scroll-view scroll-y class="code-block">
+        <text>{{genResult.prompt}}</text>
+      </scroll-view>
+      <button class="btn-copy" bindtap="copyGen">📋 复制</button>
+    </view>
+  </view>
+
+  <!-- Optimizer -->
+  <view wx:if="{{tab==='optimizer'}}" class="panel">
+    <view class="form-item">
+      <view class="label">优化风格</view>
+      <view class="radio-group">
+        <view class="radio {{optStyle==='professional'?'on':''}}" bindtap="onStyle" data-s="professional">专业</view>
+        <view class="radio {{optStyle==='concise'?'on':''}}" bindtap="onStyle" data-s="concise">简洁</view>
+        <view class="radio {{optStyle==='detailed'?'on':''}}" bindtap="onStyle" data-s="detailed">详细</view>
+      </view>
+    </view>
+    <view class="form-item">
+      <view class="label">原始 Prompt</view>
+      <textarea placeholder="粘贴你现有的 Prompt..." value="{{originalPrompt}}" bindinput="onOriInput" maxlength="2000" />
+    </view>
+    <button class="btn" bindtap="onOptimize" loading="{{optLoading}}" disabled="{{optLoading}}">🔧 优化 Prompt</button>
+
+    <view wx:if="{{optResult}}" class="result">
+      <view class="result-label">✨ {{optResult.meta.model}}</view>
+      <scroll-view scroll-y class="code-block">
+        <text>{{optResult.optimized}}</text>
+      </scroll-view>
+      <button class="btn-copy" bindtap="copyOpt">📋 复制优化版</button>
+    </view>
+  </view>
+</view>
