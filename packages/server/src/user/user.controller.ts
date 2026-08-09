@@ -13,7 +13,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '获取个人资料' })
-  getProfile(@Request() req) {
+  getProfile(@Request() req: any) {
     return this.userService.findById(req.user.id);
   }
 
@@ -21,7 +21,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新个人资料' })
-  updateProfile(@Request() req, @Body() dto: UpdateProfileDto) {
+  updateProfile(@Request() req: any, @Body() dto: UpdateProfileDto) {
     return this.userService.updateProfile(req.user.id, dto);
   }
 
@@ -29,7 +29,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '我的投稿' })
-  getMyPrompts(@Request() req, @Query('page') page = 1, @Query('pageSize') pageSize = 10) {
+  getMyPrompts(@Request() req: any, @Query('page') page = 1, @Query('pageSize') pageSize = 10) {
     return this.userService.getMyPrompts(req.user.id, +page, +pageSize);
   }
 }

@@ -12,25 +12,25 @@ export class AdminController {
 
   @Get('prompts/pending')
   @ApiOperation({ summary: '待审核提示词列表' })
-  getPending(@Request() req, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {
+  getPending(@Request() req: any, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {
     return this.adminService.getPendingPrompts(page, pageSize, req.user.role);
   }
 
   @Post('prompts/:id/approve')
   @ApiOperation({ summary: '审核通过' })
-  approve(@Param('id') id: string, @Request() req) {
+  approve(@Param('id') id: string, @Request() req: any) {
     return this.adminService.approvePrompt(+id, req.user.role);
   }
 
   @Post('prompts/:id/reject')
   @ApiOperation({ summary: '审核驳回' })
-  reject(@Param('id') id: string, @Request() req) {
+  reject(@Param('id') id: string, @Request() req: any) {
     return this.adminService.rejectPrompt(+id, req.user.role);
   }
 
   @Get('stats')
   @ApiOperation({ summary: '数据统计' })
-  stats(@Request() req) {
+  stats(@Request() req: any) {
     return this.adminService.stats(req.user.role);
   }
 }

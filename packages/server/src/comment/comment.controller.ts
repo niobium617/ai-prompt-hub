@@ -19,7 +19,7 @@ export class CommentController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '发表评论' })
-  create(@Request() req, @Body() dto: CreateCommentDto) {
+  create(@Request() req: any, @Body() dto: CreateCommentDto) {
     return this.commentService.create(req.user.id, dto);
   }
 

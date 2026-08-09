@@ -7,19 +7,19 @@ export class RatingService {
 
   async rate(userId: number, promptId: number, score: number) {
     await this.prisma.rating.upsert({
-      where: { userId_promptId: { userId: BigInt(userId), promptId: BigInt(promptId) } },
+      where: { userId_promptId: { userId: userId, promptId: promptId } },
       update: { score },
-      create: { userId: BigInt(userId), promptId: BigInt(promptId), score },
+      create: { userId: userId, promptId: promptId, score },
     });
 
     // 更新提示词平均评分
     const agg = await this.prisma.rating.aggregate({
-      where: { promptId: BigInt(promptId) },
+      where: { promptId: promptId },
       _avg: { score: true },
       _count: { score: true },
     });
     await this.prisma.prompt.update({
-      where: { id: BigInt(promptId) },
+      where: { id: promptId },
       data: { ratingAvg: agg._avg.score || 0, ratingCount: agg._count.score },
     });
 

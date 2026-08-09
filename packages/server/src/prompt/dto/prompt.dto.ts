@@ -84,6 +84,10 @@ export class QueryPromptDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  status?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   sort?: 'newest' | 'hot' | 'rating';
 
   @ApiProperty({ required: false })

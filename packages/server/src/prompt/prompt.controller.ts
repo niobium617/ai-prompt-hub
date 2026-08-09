@@ -37,7 +37,7 @@ export class PromptController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '提交提示词' })
-  create(@Request() req, @Body() dto: CreatePromptDto) {
+  create(@Request() req: any, @Body() dto: CreatePromptDto) {
     return this.promptService.create(req.user.id, dto);
   }
 
@@ -45,7 +45,7 @@ export class PromptController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '编辑提示词' })
-  update(@Param('id') id: string, @Request() req, @Body() dto: UpdatePromptDto) {
+  update(@Param('id') id: string, @Request() req: any, @Body() dto: UpdatePromptDto) {
     return this.promptService.update(+id, req.user.id, dto);
   }
 

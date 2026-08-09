@@ -12,19 +12,19 @@ export class FavoriteController {
 
   @Get()
   @ApiOperation({ summary: '我的收藏列表' })
-  findByUser(@Request() req, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {
+  findByUser(@Request() req: any, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {
     return this.favoriteService.findByUser(req.user.id, page, pageSize);
   }
 
   @Post()
   @ApiOperation({ summary: '添加收藏' })
-  add(@Request() req, @Body() body: { targetType: string; targetId: number }) {
+  add(@Request() req: any, @Body() body: { targetType: string; targetId: number }) {
     return this.favoriteService.add(req.user.id, body.targetType, body.targetId);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '取消收藏' })
-  remove(@Request() req, @Param('id') id: string) {
+  remove(@Request() req: any, @Param('id') id: string) {
     return this.favoriteService.remove(req.user.id, 'prompt', +id);
   }
 }

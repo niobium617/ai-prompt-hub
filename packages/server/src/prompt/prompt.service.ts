@@ -54,13 +54,13 @@ export class PromptService {
 
   async findById(id: number) {
     const prompt = await this.prisma.prompt.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
       include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true } } },
     });
     if (!prompt) throw new NotFoundException('提示词不存在');
 
     // 增加浏览量
-    await this.prisma.prompt.update({ where: { id: BigInt(id) }, data: { viewCount: { increment: 1 } } });
+    await this.prisma.prompt.update({ where: { id: id }, data: { viewCount: { increment: 1 } } });
 
     return {
       ...prompt,
@@ -79,8 +79,8 @@ export class PromptService {
         title: dto.title,
         description: dto.description,
         content: dto.content,
-        categoryId: BigInt(dto.categoryId),
-        authorId: BigInt(authorId),
+        categoryId: dto.categoryId,
+        authorId: authorId,
         difficulty: dto.difficulty || 1,
         aiToolIds: JSON.stringify(dto.aiToolIds || []),
         exampleImages: JSON.stringify(dto.exampleImages || []),
@@ -91,7 +91,7 @@ export class PromptService {
   }
 
   async update(id: number, userId: number, dto: UpdatePromptDto) {
-    const prompt = await this.prisma.prompt.findUnique({ where: { id: BigInt(id) } });
+    const prompt = await this.prisma.prompt.findUnique({ where: { id: id } });
     if (!prompt) throw new NotFoundException('提示词不存在');
 
     const data: any = { ...dto };
@@ -99,32 +99,42 @@ export class PromptService {
     if (dto.exampleImages) data.exampleImages = JSON.stringify(dto.exampleImages);
     delete data.categoryId; delete data.authorId;
 
-    const updated = await this.prisma.prompt.update({ where: { id: BigInt(id) }, data });
+    const updated = await this.prisma.prompt.update({ where: { id: id }, data });
     return { ...updated, id: Number(updated.id), categoryId: Number(updated.categoryId) };
   }
 
   async getHot(limit = 10) {
-    const items = await this.prisma.prompt.findMany({
-      where: { status: 2 },
-      orderBy: { viewCount: 'desc' },
-      take: limit,
-      include: { category: true },
-    });
-    return items.map(p => ({ ...p, id: Number(p.id), categoryId: Number(p.categoryId) }));
+    const n = Math.floor(+limit || 10);
+    const items = await this.prisma.$queryRawUnsafe<any[]>(
+      `SELECT p.*, c.id as cat_id, c.name as cat_name FROM prompts p LEFT JOIN categories c ON p.category_id = c.id WHERE p.status = 2 ORDER BY p.view_count DESC LIMIT ${n}`
+    );
+    return items.map((p: any) => this.mapPrompt(p));
   }
 
   async getFeatured(limit = 10) {
-    const items = await this.prisma.prompt.findMany({
-      where: { status: 2, isFeatured: 1 },
-      orderBy: { sortOrder: 'asc' },
-      take: limit,
-      include: { category: true },
-    });
-    return items.map(p => ({ ...p, id: Number(p.id), categoryId: Number(p.categoryId) }));
+    const n = Math.floor(+limit || 10);
+    const items = await this.prisma.$queryRawUnsafe<any[]>(
+      `SELECT p.*, c.id as cat_id, c.name as cat_name FROM prompts p LEFT JOIN categories c ON p.category_id = c.id WHERE p.status = 2 AND p.is_featured = 1 ORDER BY p.sort_order ASC LIMIT ${n}`
+    );
+    return items.map((p: any) => this.mapPrompt(p));
   }
 
   async recordCopy(id: number) {
-    await this.prisma.prompt.update({ where: { id: BigInt(id) }, data: { useCount: { increment: 1 } } });
+    await this.prisma.prompt.update({ where: { id: id }, data: { useCount: { increment: 1 } } });
     return { success: true };
+  }
+
+  private mapPrompt(p: any) {
+    return {
+      id: Number(p.id), title: p.title, description: p.description,
+      content: p.content, categoryId: Number(p.category_id), authorId: Number(p.author_id),
+      aiToolIds: p.ai_tool_ids ? JSON.parse(p.ai_tool_ids) : [],
+      difficulty: p.difficulty, exampleImages: p.example_images ? JSON.parse(p.example_images) : [],
+      status: p.status, viewCount: p.view_count, useCount: p.use_count,
+      favoriteCount: p.favorite_count, ratingAvg: p.rating_avg, ratingCount: p.rating_count,
+      isFeatured: p.is_featured, sortOrder: p.sort_order,
+      createdAt: p.created_at, updatedAt: p.updated_at, publishedAt: p.published_at,
+      category: { id: Number(p.cat_id), name: p.cat_name },
+    };
   }
 }

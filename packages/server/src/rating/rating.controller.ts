@@ -12,7 +12,7 @@ export class RatingController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '评分' })
-  rate(@Param('id') id: string, @Request() req, @Body('score') score: number) {
+  rate(@Param('id') id: string, @Request() req: any, @Body('score') score: number) {
     return this.ratingService.rate(req.user.id, +id, score);
   }
 }

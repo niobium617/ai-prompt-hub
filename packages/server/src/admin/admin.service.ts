@@ -23,13 +23,13 @@ export class AdminService {
 
   async approvePrompt(promptId: number, userRole: string) {
     this.checkAdmin(userRole);
-    await this.prisma.prompt.update({ where: { id: BigInt(promptId) }, data: { status: 2, publishedAt: new Date() } });
+    await this.prisma.prompt.update({ where: { id: promptId }, data: { status: 2, publishedAt: new Date() } });
     return { success: true };
   }
 
   async rejectPrompt(promptId: number, userRole: string) {
     this.checkAdmin(userRole);
-    await this.prisma.prompt.update({ where: { id: BigInt(promptId) }, data: { status: 3 } });
+    await this.prisma.prompt.update({ where: { id: promptId }, data: { status: 3 } });
     return { success: true };
   }
 

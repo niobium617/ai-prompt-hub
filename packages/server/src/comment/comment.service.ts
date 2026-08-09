@@ -7,7 +7,7 @@ export class CommentService {
   constructor(private prisma: PrismaService) {}
 
   async findByTarget(targetType: string, targetId: number, page = 1, pageSize = 20) {
-    const where = { targetType, targetId: BigInt(targetId), parentId: null, status: 1 };
+    const where = { targetType, targetId: targetId, parentId: null, status: 1 };
     const [items, total] = await Promise.all([
       this.prisma.comment.findMany({
         where,
@@ -39,14 +39,14 @@ export class CommentService {
 
   async create(userId: number, dto: CreateCommentDto) {
     const comment = await this.prisma.comment.create({
-      data: { userId: BigInt(userId), targetType: dto.targetType, targetId: BigInt(dto.targetId), parentId: dto.parentId ? BigInt(dto.parentId) : null, content: dto.content },
+      data: { userId: userId, targetType: dto.targetType, targetId: dto.targetId, parentId: dto.parentId ? dto.parentId : null, content: dto.content },
       include: { user: { select: { id: true, nickname: true, avatarUrl: true } } },
     });
     return { ...comment, id: Number(comment.id), userId: Number(comment.userId), user: { ...comment.user, id: Number(comment.user.id) } };
   }
 
   async like(commentId: number) {
-    await this.prisma.comment.update({ where: { id: BigInt(commentId) }, data: { likeCount: { increment: 1 } } });
+    await this.prisma.comment.update({ where: { id: commentId }, data: { likeCount: { increment: 1 } } });
     return { success: true };
   }
 }

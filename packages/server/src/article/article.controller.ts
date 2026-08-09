@@ -25,7 +25,7 @@ export class ArticleController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建文章' })
-  create(@Request() req, @Body() dto: CreateArticleDto) {
+  create(@Request() req: any, @Body() dto: CreateArticleDto) {
     return this.articleService.create(req.user.id, dto);
   }
 }

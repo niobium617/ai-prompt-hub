@@ -26,11 +26,11 @@ export class ArticleService {
 
   async findById(id: number) {
     const article = await this.prisma.article.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
       include: { author: { select: { id: true, nickname: true, avatarUrl: true } } },
     });
     if (!article) throw new NotFoundException('文章不存在');
-    await this.prisma.article.update({ where: { id: BigInt(id) }, data: { viewCount: { increment: 1 } } });
+    await this.prisma.article.update({ where: { id: id }, data: { viewCount: { increment: 1 } } });
     return { ...article, id: Number(article.id), author: { ...article.author, id: Number(article.author.id) } };
   }
 
@@ -40,8 +40,8 @@ export class ArticleService {
         title: dto.title,
         summary: dto.summary,
         content: dto.content,
-        authorId: BigInt(authorId),
-        categoryId: dto.categoryId ? BigInt(dto.categoryId) : null,
+        authorId: authorId,
+        categoryId: dto.categoryId ? dto.categoryId : null,
         tagIds: JSON.stringify(dto.tagIds || []),
         chapterStructure: dto.chapterStructure ? JSON.stringify(dto.chapterStructure) : null,
         status: 1,

@@ -8,7 +8,7 @@ export class UserService {
 
   async findById(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
       select: {
         id: true, username: true, email: true, nickname: true,
         avatarUrl: true, bio: true, level: true, points: true,
@@ -21,7 +21,7 @@ export class UserService {
 
   async updateProfile(id: number, dto: UpdateProfileDto) {
     const user = await this.prisma.user.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: {
         ...(dto.nickname && { nickname: dto.nickname }),
         ...(dto.bio !== undefined && { bio: dto.bio }),
@@ -39,13 +39,13 @@ export class UserService {
   async getMyPrompts(userId: number, page: number, pageSize: number) {
     const [items, total] = await Promise.all([
       this.prisma.prompt.findMany({
-        where: { authorId: BigInt(userId) },
+        where: { authorId: userId },
         skip: (page - 1) * pageSize,
         take: pageSize,
         orderBy: { createdAt: 'desc' },
         include: { category: true },
       }),
-      this.prisma.prompt.count({ where: { authorId: BigInt(userId) } }),
+      this.prisma.prompt.count({ where: { authorId: userId } }),
     ]);
     return { items: items.map(p => ({ ...p, id: Number(p.id), categoryId: Number(p.categoryId) })), total, page, pageSize };
   }
