@@ -1,6 +1,9 @@
 {
   "description": "AI Prompt Hub 微信小程序",
-  "packOptions": { "ignore": [], "include": [] },
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
   "setting": {
     "bundle": false,
     "userConfirmedBundleSwitch": false,
@@ -30,11 +33,26 @@
     "minifyWXSS": true,
     "showES6CompileOption": false,
     "minifyWXML": true,
-    "babelSetting": { "ignore": [], "disablePlugins": [], "outputPath": "" }
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "compileWorklet": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": [
+      "typescript"
+    ],
+    "condition": false,
+    "swc": true,
+    "disableSWC": false
   },
   "compileType": "miniprogram",
   "libVersion": "3.3.4",
-  "appid": "REMOVED-SECRET-here",
+  "appid": "wx316325d525c8fa75",
   "projectname": "ai-prompt-hub",
-  "condition": {}
+  "condition": {},
+  "simulatorPluginLibVersion": {},
+  "editorSetting": {}
 }
