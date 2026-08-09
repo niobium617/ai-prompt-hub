@@ -9,9 +9,9 @@
   <!-- 已登录 -->
   <view wx:else>
     <view class="user-card">
-      <view class="avatar">{{userInfo?.nickname?.[0] || '?'}}</view>
+      <view class="avatar">{{userInfo && userInfo.nickname ? userInfo.nickname[0] : '?'}}</view>
       <view class="user-info">
-        <view class="nickname">{{userInfo?.nickname || '用户'}}</view>
+        <view class="nickname">{{userInfo ? userInfo.nickname : '用户'}}</view>
         <view class="points">积分 {{stats.prompts}} · 收藏 {{stats.favorites}}</view>
       </view>
     </view>

@@ -11,7 +11,7 @@
     <view class="form-item">
       <view class="label">分类 <text class="req">*</text></view>
       <picker mode="selector" range="{{categories}}" range-key="name" bindchange="onCatChange">
-        <view class="picker">{{categories[catIndex]?.name || '请选择'}}</view>
+        <view class="picker">{{categories[catIndex] ? categories[catIndex].name : '请选择'}}</view>
       </picker>
     </view>
     <view class="form-item">

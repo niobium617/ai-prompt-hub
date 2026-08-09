@@ -2,7 +2,7 @@
   <!-- 标题区 -->
   <view class="header">
     <view class="tags">
-      <text class="tag tag-blue">{{prompt.category?.name}}</text>
+      <text class="tag tag-blue">{{prompt.category ? prompt.category.name : ''}}</text>
       <text class="tag tag-{{prompt.difficulty===1?'green':prompt.difficulty===2?'orange':'red'}}">{{prompt.difficulty===1?'入门':prompt.difficulty===2?'进阶':'高级'}}</text>
       <text wx:if="{{prompt.isFeatured}}" class="tag tag-gold">精选</text>
     </view>
@@ -38,7 +38,7 @@
       <button class="btn-send" bindtap="onSubmitComment">发送</button>
     </view>
     <view wx:for="{{comments}}" wx:key="id" class="comment">
-      <view class="cmt-user">{{item.user?.nickname || '匿名'}} <text class="cmt-time">{{item.createdAt?.slice(0,10)}}</text></view>
+      <view class="cmt-user">{{item.user ? item.user.nickname : '匿名'}} <text class="cmt-time">{{item.createdAt}}</text></view>
       <view class="cmt-text">{{item.content}}</view>
       <view class="cmt-like">👍 {{item.likeCount}}</view>
     </view>

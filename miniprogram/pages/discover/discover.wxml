@@ -12,7 +12,7 @@
     <view class="card" wx:for="{{newPrompts}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
       <view class="card-title">{{item.title}}</view>
       <view class="card-desc">{{item.description}}</view>
-      <view class="card-foot">📁 {{item.category?.name}} · {{item.createdAt?.slice(0,10)}}</view>
+      <view class="card-foot">📁 {{item.category ? item.category.name : ''}} · {{item.createdAt}}</view>
     </view>
   </view>
 

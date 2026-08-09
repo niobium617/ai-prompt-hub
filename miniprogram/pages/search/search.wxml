@@ -13,7 +13,7 @@
       <view class="card" wx:for="{{results}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
         <view class="card-title">{{item.title}}</view>
         <view class="card-desc">{{item.description}}</view>
-        <view class="card-foot">📁 {{item.category?.name}} · ⭐ {{item.ratingAvg}}</view>
+        <view class="card-foot">📁 {{item.category ? item.category.name : ''}} · ⭐ {{item.ratingAvg}}</view>
       </view>
     </view>
   </view>

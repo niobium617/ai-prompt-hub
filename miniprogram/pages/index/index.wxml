@@ -44,7 +44,7 @@
           <view class="tag tag-{{item.difficulty === 1 ? 'green' : item.difficulty === 2 ? 'orange' : 'red'}}">{{item.difficulty === 1 ? '入门' : item.difficulty === 2 ? '进阶' : '高级'}}</view>
         </view>
         <view class="card-desc">{{item.description}}</view>
-        <view class="card-foot">📁 {{item.category?.name || '-'}}  ⭐ {{item.ratingAvg}}  👁 {{item.viewCount}}</view>
+        <view class="card-foot">📁 {{item.category ? item.category.name : '-'}}  ⭐ {{item.ratingAvg}}  👁 {{item.viewCount}}</view>
       </view>
     </view>
   </view>
@@ -60,7 +60,7 @@
           <view class="tag tag-{{item.difficulty === 1 ? 'green' : item.difficulty === 2 ? 'orange' : 'red'}}">{{item.difficulty === 1 ? '入门' : item.difficulty === 2 ? '进阶' : '高级'}}</view>
         </view>
         <view class="card-desc">{{item.description}}</view>
-        <view class="card-foot">📁 {{item.category?.name || '-'}}  ⭐ {{item.ratingAvg}}  ❤ {{item.favoriteCount}}</view>
+        <view class="card-foot">📁 {{item.category ? item.category.name : '-'}}  ⭐ {{item.ratingAvg}}  ❤ {{item.favoriteCount}}</view>
       </view>
     </view>
   </view>
