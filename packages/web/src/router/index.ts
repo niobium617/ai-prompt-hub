@@ -83,6 +83,18 @@ const router = createRouter({
       meta: { title: '管理后台', requiresAuth: true, requiresAdmin: true },
     },
     {
+      path: '/skills',
+      name: 'skills',
+      component: () => import('../pages/skills/SkillsPage.vue'),
+      meta: { title: 'Prompt 技巧大全' },
+    },
+    {
+      path: '/resources',
+      name: 'resources',
+      component: () => import('../pages/resources/ResourcesPage.vue'),
+      meta: { title: 'AI 资源与开源项目' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
