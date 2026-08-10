@@ -21,10 +21,13 @@ function request<T = any>(options: RequestOptions): Promise<T> {
         ...options.header,
       },
       success(res: any) {
-        if (res.data.code === 0) {
-          resolve(res.data.data);
-        } else if (res.data.code === 40100) {
-          // Token过期，触发刷新
+        // 200: 直接返回 data（后端无统一包装层）
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          resolve(res.data as T);
+          return;
+        }
+        // 401: Token 过期
+        if (res.statusCode === 401) {
           const refreshToken = wx.getStorageSync('refreshToken');
           if (refreshToken) {
             wx.request({
@@ -32,10 +35,9 @@ function request<T = any>(options: RequestOptions): Promise<T> {
               method: 'POST',
               data: { refreshToken },
               success(r: any) {
-                if (r.data.code === 0) {
-                  wx.setStorageSync('accessToken', r.data.data.accessToken);
-                  // 重试原请求
-                  request(options).then(resolve).catch(reject);
+                if (r.statusCode === 200 && r.data.accessToken) {
+                  wx.setStorageSync('accessToken', r.data.accessToken);
+                  request<T>(options).then(resolve).catch(reject);
                 } else {
                   wx.removeStorageSync('accessToken');
                   wx.removeStorageSync('refreshToken');
@@ -46,13 +48,16 @@ function request<T = any>(options: RequestOptions): Promise<T> {
               fail: reject,
             });
           } else {
+            wx.removeStorageSync('accessToken');
+            wx.removeStorageSync('refreshToken');
             wx.redirectTo({ url: '/pages/login/login' });
             reject(res.data);
           }
-        } else {
-          wx.showToast({ title: res.data.message || '请求失败', icon: 'none' });
-          reject(res.data);
+          return;
         }
+        // 其他错误
+        wx.showToast({ title: (res.data as any)?.message || '请求失败', icon: 'none' });
+        reject(res.data);
       },
       fail(err) {
         wx.showToast({ title: '网络错误', icon: 'none' });
@@ -63,7 +68,17 @@ function request<T = any>(options: RequestOptions): Promise<T> {
 }
 
 export const api = {
-  get: <T = any>(url: string, data?: any) => request<T>({ url, method: 'GET', data }),
+  get: <T = any>(url: string, params?: any) => {
+    let query = '';
+    if (params) {
+      const qs = Object.keys(params)
+        .filter(k => params[k] !== undefined && params[k] !== null)
+        .map(k => `${k}=${encodeURIComponent(params[k])}`)
+        .join('&');
+      if (qs) query = '?' + qs;
+    }
+    return request<T>({ url: url + query, method: 'GET' });
+  },
   post: <T = any>(url: string, data?: any) => request<T>({ url, method: 'POST', data }),
   put: <T = any>(url: string, data?: any) => request<T>({ url, method: 'PUT', data }),
   delete: <T = any>(url: string, data?: any) => request<T>({ url, method: 'DELETE', data }),
