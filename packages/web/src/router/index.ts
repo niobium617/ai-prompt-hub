@@ -65,6 +65,12 @@ const router = createRouter({
       meta: { title: '个人中心', requiresAuth: true },
     },
     {
+      path: '/article/new',
+      name: 'article-new',
+      component: () => import('../pages/article/EditPage.vue'),
+      meta: { title: '发布文章', requiresAuth: true },
+    },
+    {
       path: '/user/favorites',
       name: 'favorites',
       component: () => import('../pages/user/FavoritesPage.vue'),

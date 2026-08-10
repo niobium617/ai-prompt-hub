@@ -22,7 +22,7 @@ onMounted(async () => {
         <span>{{ new Date(article.createdAt).toLocaleDateString() }}</span>
         <span>👁 {{ article.viewCount }}</span>
       </div>
-      <div class="prose max-w-none" v-html="marked(article.content)"></div>
+      <div class="prose max-w-none" v-html="marked(article.content || '', { breaks: true, gfm: true })"></div>
     </div>
   </div>
 </template>

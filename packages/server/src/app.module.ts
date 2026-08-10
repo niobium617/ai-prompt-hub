@@ -16,11 +16,18 @@ import { SearchModule } from './search/search.module';
 import { ArticleModule } from './article/article.module';
 import { AiToolModule } from './ai-tool/ai-tool.module';
 import { AdminModule } from './admin/admin.module';
+import { UploadModule } from './upload/upload.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '../../.env'] }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+    }),
     PrismaModule,
     LlmModule,
     AuthModule,
@@ -35,6 +42,7 @@ import { AdminModule } from './admin/admin.module';
     ArticleModule,
     AiToolModule,
     AdminModule,
+    UploadModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
