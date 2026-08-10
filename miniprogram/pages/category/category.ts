@@ -10,26 +10,31 @@ Page({
 
   onLoad() {
     api.get('/categories').then((cats: any) => {
-      const catList = cats || [];
-      const firstId = catList.length > 0 ? catList[0].id : 0;
-      this.setData({ categories: catList, selectedId: firstId });
-      if (firstId > 0) this.fetchPrompts();
+      const catList = Array.isArray(cats) ? cats : [];
+      this.setData({ categories: catList });
+      this.fetchPrompts();
     });
   },
 
   onSelectCat(e: any) {
     const id = e.currentTarget.dataset.id;
-    if (id === this.data.selectedId) return;
     this.setData({ selectedId: id });
     this.fetchPrompts();
   },
 
   async fetchPrompts() {
-    if (!this.data.selectedId) return;
     this.setData({ loading: true, prompts: [] });
     try {
-      const res: any = await api.get(`/categories/${this.data.selectedId}/prompts`);
-      this.setData({ prompts: res ? res.items || [] : [], loading: false });
+      let res: any;
+      if (this.data.selectedId > 0) {
+        // 按分类加载
+        res = await api.get(`/categories/${this.data.selectedId}/prompts`);
+      } else {
+        // 全部
+        res = await api.get('/prompts', { pageSize: 50 });
+      }
+      const items = res ? (res.items || []) : [];
+      this.setData({ prompts: items, loading: false });
     } catch {
       this.setData({ prompts: [], loading: false });
     }

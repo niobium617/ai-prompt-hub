@@ -1,14 +1,41 @@
-<view class="category-page">
-  <scroll-view scroll-y class="left-panel">
-    <view wx:for="{{categories}}" wx:key="id"
+<view class="page">
+  <view class="left-panel">
+    <view class="cat-item {{!selectedId ? 'active' : ''}}" bindtap="onSelectCat" data-id="{{0}}">
+      <text>全部</text>
+    </view>
+    <view
+      wx:for="{{categories}}"
+      wx:key="id"
       class="cat-item {{selectedId === item.id ? 'active' : ''}}"
-      data-id="{{item.id}}" bindtap="onSelectCat">{{item.name}}</view>
-  </scroll-view>
-  <scroll-view scroll-y class="right-panel">
-    <prompt-card wx:for="{{prompts}}" wx:key="id" prompt="{{item}}" />
-    <view wx:if="{{!prompts.length && !loading}}" class="empty-state">
-      <text class="icon">📭</text>
+      data-id="{{item.id}}"
+      bindtap="onSelectCat"
+    >
+      <text>{{item.name}}</text>
+    </view>
+  </view>
+  <view class="right-panel">
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    <view wx:elif="{{!prompts.length}}" class="empty">
+      <text class="empty-icon">📭</text>
       <text>暂无提示词</text>
     </view>
-  </scroll-view>
+    <view wx:else>
+      <view
+        wx:for="{{prompts}}"
+        wx:key="id"
+        class="card"
+        bindtap="onTapPrompt"
+        data-id="{{item.id}}"
+      >
+        <view class="card-header">
+          <view class="card-title">{{item.title}}</view>
+          <view class="tag tag-{{item.difficulty === 1 ? 'green' : item.difficulty === 2 ? 'orange' : 'red'}}">
+            {{item.difficulty === 1 ? '入门' : item.difficulty === 2 ? '进阶' : '高级'}}
+          </view>
+        </view>
+        <view class="card-desc">{{item.description}}</view>
+        <view class="card-foot">👁 {{item.viewCount}} · ⭐ {{item.ratingAvg}}</view>
+      </view>
+    </view>
+  </view>
 </view>

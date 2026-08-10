@@ -1,5 +1,18 @@
-.category-page { display: flex; height: calc(100vh - 100rpx); }
+.page { display: flex; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
 .left-panel { width: 180rpx; background: #fff; overflow-y: auto; }
-.cat-item { padding: 28rpx 16rpx; font-size: 26rpx; color: #666; border-left: 4rpx solid transparent; text-align: center; }
+.cat-item { padding: 28rpx 12rpx; font-size: 26rpx; color: #666; border-left: 4rpx solid transparent; text-align: center; }
 .cat-item.active { color: #3b82f6; background: #eff6ff; border-left-color: #3b82f6; font-weight: 600; }
 .right-panel { flex: 1; padding: 16rpx; background: #f5f7fa; overflow-y: auto; }
+.loading { text-align: center; color: #999; padding: 80rpx 0; font-size: 26rpx; }
+.empty { text-align: center; padding: 80rpx 0; color: #ccc; }
+.empty-icon { font-size: 60rpx; display: block; margin-bottom: 16rpx; }
+
+.card { background: #fff; border-radius: 16rpx; padding: 24rpx; margin-bottom: 16rpx; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12rpx; }
+.card-title { font-size: 28rpx; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.card-desc { font-size: 24rpx; color: #999; margin-bottom: 12rpx; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.card-foot { font-size: 22rpx; color: #bbb; }
+.tag { padding: 4rpx 14rpx; border-radius: 6rpx; font-size: 20rpx; margin-left: 8rpx; white-space: nowrap; }
+.tag-green { background: #f0fdf4; color: #22c55e; }
+.tag-orange { background: #fffbeb; color: #f59e0b; }
+.tag-red { background: #fef2f2; color: #ef4444; }
