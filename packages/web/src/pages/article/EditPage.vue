@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
 import { ElMessage } from 'element-plus';
@@ -61,6 +61,19 @@ async function onPublish() {
   } catch { }
   submitting.value = false;
 }
+
+// Markdown 预览
+const previewHtml = computed(() => {
+  if (!content.value) return '';
+  return content.value
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%;border-radius:8px;margin:8px 0">')
+    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+    .replace(/##\s(.+)/g, '<h2 style="font-size:20px;font-weight:bold;margin:12px 0">$1</h2>')
+    .replace(/```([\s\S]*?)```/g, '<pre style="background:#1e293b;color:#4ade80;padding:12px;border-radius:8px;overflow-x:auto">$1</pre>')
+    .replace(/- (.+)/g, '<li style="margin-left:16px">$1</li>');
+});
 
 // Markdown 工具栏
 function insertMd(syntax: string) {
@@ -127,7 +140,7 @@ function insertMd(syntax: string) {
       <!-- 预览 -->
       <div v-if="content" class="border-t pt-4">
         <h3 class="font-semibold mb-3">📄 预览</h3>
-        <div class="prose max-w-none bg-gray-50 rounded-xl p-4" v-html="content.replace(/\n/g,'<br>').replace(/\!\[([^\]]*)\]\(([^)]+)\)/g,'<img src=\"$2\" alt=\"$1\" style=\"max-width:100%\">').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\#\#\s(.+)/g,'<h2 style=\"font-size:20px;font-weight:bold;margin:8px 0\">$1</h2>').replace(/\`\`\`([\s\S]*?)\`\`\`/g,'<pre style=\"background:#1e293b;color:#4ade80;padding:12px;border-radius:8px\">$1</pre>')"></div>
+        <div class="prose max-w-none bg-gray-50 rounded-xl p-4" v-html="previewHtml"></div>
       </div>
       <!-- 发布按钮 -->
       <div class="flex gap-3 pt-4 border-t">
