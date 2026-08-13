@@ -30,9 +30,9 @@ function onSearch() {
 
 <template>
   <!-- Banner -->
-  <section class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-10 mb-8 text-white text-center">
-    <h1 class="text-4xl font-bold mb-4">发现高质量的 AI 提示词</h1>
-    <p class="text-lg opacity-90 mb-6">汇集最实用的 Prompt，让每个人都能用好 AI</p>
+  <section class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-10 mb-8 text-white text-center">
+    <h1 class="text-2xl md:text-4xl font-bold mb-4">发现高质量的 AI 提示词</h1>
+    <p class="text-base md:text-lg opacity-90 mb-6">汇集最实用的 Prompt，让每个人都能用好 AI</p>
     <div class="max-w-xl mx-auto flex gap-2">
       <el-input
         v-model="searchKeyword"

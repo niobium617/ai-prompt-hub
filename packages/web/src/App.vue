@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import api from '@/api';
 
 const router = useRouter();
+const route = useRoute();
 const userStore = useUserStore();
 
 // 搜索
@@ -53,10 +54,10 @@ function onTagClick(tag: string) {
   <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- 顶部导航 -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
-      <div class="container flex items-center justify-between h-16">
-        <div class="flex items-center gap-8">
-          <router-link to="/" class="text-xl font-bold text-primary-600">
-            🚀 AI Prompt Hub
+      <div class="container flex items-center justify-between h-14 md:h-16 gap-2">
+        <div class="flex items-center gap-4 md:gap-8 min-w-0">
+          <router-link to="/" class="text-base md:text-xl font-bold text-primary-600 whitespace-nowrap">
+            🚀 <span class="hidden sm:inline">AI Prompt Hub</span><span class="sm:hidden">APH</span>
           </router-link>
           <nav class="hidden md:flex items-center gap-6">
             <router-link to="/prompts" class="text-gray-600 hover:text-primary-600 transition text-sm">
@@ -76,23 +77,23 @@ function onTagClick(tag: string) {
             </router-link>
           </nav>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
           <!-- 搜索栏 -->
           <div class="relative">
-            <div class="flex items-center bg-gray-100 rounded-full px-4 py-1.5 hover:bg-gray-200 transition cursor-pointer" @click="onSearchFocus">
-              <span class="text-gray-400 mr-2 text-sm">🔍</span>
+            <div class="flex items-center bg-gray-100 rounded-full px-3 py-1.5 hover:bg-gray-200 transition cursor-pointer" @click="onSearchFocus">
+              <span class="text-gray-400 mr-1.5 text-sm">🔍</span>
               <input
                 v-model="searchKeyword"
                 type="text"
-                placeholder="搜索提示词..."
-                class="bg-transparent border-none outline-none text-sm w-32 lg:w-48 text-gray-700 placeholder-gray-400"
+                placeholder="搜索..."
+                class="bg-transparent border-none outline-none text-sm w-16 sm:w-24 lg:w-48 text-gray-700 placeholder-gray-400"
                 @focus="onSearchFocus"
                 @blur="onSearchBlur"
                 @keyup.enter="doSearch()"
               />
             </div>
             <!-- 搜索下拉 -->
-            <div v-if="searchFocus" class="absolute top-full mt-2 left-0 w-72 bg-white rounded-xl shadow-xl border z-50 overflow-hidden">
+            <div v-if="searchFocus" class="fixed inset-x-4 top-14 md:absolute md:top-full md:mt-2 md:left-auto md:right-0 md:inset-x-auto md:w-72 bg-white rounded-xl shadow-xl border z-50 overflow-hidden">
               <!-- 搜索建议 -->
               <div v-if="suggestions.length">
                 <div class="px-4 py-2 text-xs text-gray-400 font-medium">搜索建议</div>
@@ -124,8 +125,8 @@ function onTagClick(tag: string) {
           </div>
           <template v-if="userStore.isLoggedIn">
             <el-dropdown trigger="click">
-              <span class="text-gray-700 cursor-pointer text-sm font-medium">
-                {{ userStore.user?.nickname || '用户' }} ▾
+              <span class="text-gray-700 cursor-pointer text-sm font-medium whitespace-nowrap">
+                {{ (userStore.user?.nickname || '用户').slice(0, 6) }} ▾
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -140,7 +141,7 @@ function onTagClick(tag: string) {
             </el-dropdown>
           </template>
           <template v-else>
-            <router-link to="/login" class="text-sm text-gray-600 hover:text-primary-600">登录</router-link>
+            <router-link to="/login" class="text-sm text-gray-600 hover:text-primary-600 whitespace-nowrap">登录</router-link>
             <router-link to="/register">
               <el-button type="primary" size="small">注册</el-button>
             </router-link>
@@ -150,12 +151,36 @@ function onTagClick(tag: string) {
     </header>
 
     <!-- 页面内容 -->
-    <main class="container py-6 flex-1">
+    <main class="container py-4 md:py-6 flex-1 pb-20 md:pb-6">
       <router-view />
     </main>
 
+    <!-- 移动端底部导航 -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t flex z-50">
+      <router-link to="/" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs"
+        :class="route.path === '/' ? 'text-primary-600' : 'text-gray-500'">
+        <span class="text-lg">🏠</span>首页
+      </router-link>
+      <router-link to="/prompts" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs"
+        :class="route.path.startsWith('/prompts') ? 'text-primary-600' : 'text-gray-500'">
+        <span class="text-lg">📁</span>广场
+      </router-link>
+      <router-link to="/tutorials" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs"
+        :class="route.path.startsWith('/tutorials') ? 'text-primary-600' : 'text-gray-500'">
+        <span class="text-lg">📖</span>教程
+      </router-link>
+      <router-link to="/tools/generator" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs"
+        :class="route.path.startsWith('/tools') ? 'text-primary-600' : 'text-gray-500'">
+        <span class="text-lg">🛠️</span>工具
+      </router-link>
+      <router-link to="/user" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs"
+        :class="route.path.startsWith('/user') ? 'text-primary-600' : 'text-gray-500'">
+        <span class="text-lg">👤</span>我的
+      </router-link>
+    </nav>
+
     <!-- 底部 -->
-    <footer class="bg-white border-t py-8 mt-auto">
+    <footer class="hidden md:block bg-white border-t py-8 mt-auto">
       <div class="container">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6 text-sm">
           <div>
