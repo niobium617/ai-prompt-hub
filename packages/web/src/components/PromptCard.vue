@@ -1,10 +1,17 @@
 <script setup lang="ts">
-defineProps<{ prompt: any }>();
+import { useRouter } from 'vue-router';
+
+const props = defineProps<{ prompt: any }>();
+const router = useRouter();
+
+function goDetail() {
+  router.push(`/prompts/${props.prompt.id}`);
+}
 </script>
 
 <template>
   <div
-    @click="$router.push(`/prompts/${prompt.id}`)"
+    @click="goDetail"
     class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-lg transition border border-gray-100 hover:border-primary-200"
   >
     <div class="flex items-start justify-between mb-3">

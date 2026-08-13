@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import api from '@/api';
 import PromptCard from '@/components/PromptCard.vue';
 
 const route = useRoute();
+const router = useRouter();
 const keyword = ref((route.query.keyword as string) || '');
 const prompts = ref<any[]>([]);
 const suggestions = ref<{ id: number; title: string }[]>([]);
@@ -79,7 +80,7 @@ watch(keyword, (val) => {
     </div>
 
     <div v-else class="space-y-4">
-      <div v-for="p in prompts" :key="p.id" @click="$router.push(`/prompts/${p.id}`)"
+      <div v-for="p in prompts" :key="p.id" @click="router.push(`/prompts/${p.id}`)"
         class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-md transition border hover:border-primary-200">
         <h3 class="font-semibold mb-2 text-primary-700">{{ p.title }}</h3>
         <p class="text-sm text-gray-500 line-clamp-2">{{ p.description }}</p>

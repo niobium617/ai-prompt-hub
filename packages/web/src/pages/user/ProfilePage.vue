@@ -11,7 +11,7 @@ const bio = ref('');
 const myPrompts = ref<any[]>([]);
 
 onMounted(async () => {
-  await userStore.fetchProfile();
+  await userStore.init();
   nickname.value = userStore.user?.nickname || '';
   bio.value = userStore.user?.bio || '';
   const res = await api.get('/user/prompts', { params: { page: 1, pageSize: 10 } });
@@ -20,7 +20,7 @@ onMounted(async () => {
 
 async function onSave() {
   await api.put('/user/profile', { nickname: nickname.value, bio: bio.value });
-  await userStore.fetchProfile();
+  await userStore.init();
   ElMessage.success('保存成功');
 }
 </script>
