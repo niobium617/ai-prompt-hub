@@ -13,11 +13,18 @@ const userStore = useUserStore();
     <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div class="container">
         <div class="flex items-center justify-between h-14 md:h-16">
-          <div class="flex items-center gap-4 md:gap-8 min-w-0">
+          <div class="flex items-center gap-3 md:gap-8 min-w-0">
             <router-link to="/" class="text-lg md:text-xl font-bold text-primary-600 whitespace-nowrap">
               🚀 AI Prompt Hub
             </router-link>
+            <!-- 移动端首页按钮 -->
+            <router-link to="/" class="md:hidden px-3 py-1 rounded-full text-sm font-medium"
+              :class="route.path === '/' ? 'bg-primary-50 text-primary-600' : 'text-gray-600 bg-gray-100'">
+              🏠 首页
+            </router-link>
             <nav class="hidden md:flex items-center gap-6">
+              <router-link to="/" class="text-gray-600 hover:text-primary-600 transition text-sm"
+                :class="route.path === '/' ? 'text-primary-600 font-semibold' : ''">首页</router-link>
               <router-link to="/prompts" class="text-gray-600 hover:text-primary-600 transition text-sm">提示词广场</router-link>
               <router-link to="/skills" class="text-gray-600 hover:text-primary-600 transition text-sm">🎯 技巧</router-link>
               <router-link to="/tools/generator" class="text-gray-600 hover:text-primary-600 transition text-sm">生成器</router-link>
