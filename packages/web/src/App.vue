@@ -1,53 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/stores/user';
-import api from '@/api';
 
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
-
-// 搜索
-const searchKeyword = ref('');
-const searchFocus = ref(false);
-const suggestions = ref<{ id: number; title: string }[]>([]);
-const hotTags = ref<string[]>([]);
-let debounce: ReturnType<typeof setTimeout>;
-
-async function loadHotTags() {
-  try { hotTags.value = await api.get('/tags/hot', { limit: 8 }); } catch { hotTags.value = []; }
-}
-
-function onSearchFocus() {
-  searchFocus.value = true;
-  if (!hotTags.value.length) loadHotTags();
-}
-
-function onSearchBlur() {
-  setTimeout(() => { searchFocus.value = false; }, 200);
-}
-
-watch(searchKeyword, (val) => {
-  clearTimeout(debounce);
-  if (!val.trim()) { suggestions.value = []; return; }
-  debounce = setTimeout(async () => {
-    try { suggestions.value = await api.get('/search/suggestions', { keyword: val, limit: 6 }); } catch { suggestions.value = []; }
-  }, 200);
-});
-
-function doSearch(kw?: string) {
-  const q = kw || searchKeyword.value.trim();
-  if (!q) return;
-  searchFocus.value = false;
-  searchKeyword.value = '';
-  router.push({ path: '/search', query: { keyword: q } });
-}
-
-function onTagClick(tag: string) {
-  searchKeyword.value = tag;
-  doSearch(tag);
-}
 </script>
 
 <template>
@@ -92,51 +49,8 @@ function onTagClick(tag: string) {
                 <el-button type="primary" size="small">注册</el-button>
               </router-link>
             </template>
-            <!-- 桌面端搜索 -->
-            <div class="relative hidden md:block">
-              <div class="flex items-center bg-gray-100 rounded-full px-3 py-1.5 hover:bg-gray-200 transition cursor-pointer" @click="onSearchFocus">
-                <span class="text-gray-400 mr-1.5 text-sm">🔍</span>
-                <input
-                  v-model="searchKeyword"
-                  type="text"
-                  placeholder="搜索提示词..."
-                  class="bg-transparent border-none outline-none text-sm w-40 lg:w-48 text-gray-700 placeholder-gray-400"
-                  @focus="onSearchFocus"
-                  @blur="onSearchBlur"
-                  @keyup.enter="doSearch()"
-                />
-              </div>
-              <!-- 搜索下拉 -->
-              <div v-if="searchFocus" class="absolute top-full mt-2 right-0 w-72 bg-white rounded-xl shadow-xl border z-50 overflow-hidden">
-                <div v-if="suggestions.length">
-                  <div class="px-4 py-2 text-xs text-gray-400 font-medium">搜索建议</div>
-                  <div
-                    v-for="s in suggestions" :key="s.id"
-                    class="px-4 py-2.5 hover:bg-gray-50 cursor-pointer text-sm flex items-center gap-2"
-                    @mousedown.prevent="doSearch(s.title)"
-                  >
-                    <span class="text-gray-400">🔍</span>
-                    <span>{{ s.title }}</span>
-                  </div>
-                </div>
-                <div v-if="!searchKeyword && hotTags.length">
-                  <div class="px-4 py-2 text-xs text-gray-400 font-medium">🔥 热门搜索</div>
-                  <div class="flex flex-wrap gap-2 px-4 pb-3">
-                    <span
-                      v-for="t in hotTags" :key="t"
-                      class="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-600 cursor-pointer hover:bg-primary-50 hover:text-primary-600 transition"
-                      @mousedown.prevent="onTagClick(t)"
-                    >{{ t }}</span>
-                  </div>
-                </div>
-                <div v-if="searchKeyword && !suggestions.length" class="px-4 py-6 text-center text-sm text-gray-400">
-                  暂无匹配结果，按回车搜索 "{{ searchKeyword }}"
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-
       </div>
     </header>
 
