@@ -10,7 +10,7 @@ echo "=== 1/4 拉取最新代码 ==="
 git pull
 
 echo "=== 2/4 安装新依赖（如有） ==="
-pnpm install --silent || true
+pnpm install
 
 echo "=== 3/4 构建 ==="
 pnpm build:server
