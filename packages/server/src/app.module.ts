@@ -4,6 +4,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { LlmModule } from './common/llm/llm.module';
+import { MailModule } from './common/mail/mail.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PromptModule } from './prompt/prompt.module';
@@ -30,6 +31,7 @@ import { join } from 'path';
     }),
     PrismaModule,
     LlmModule,
+    MailModule,
     AuthModule,
     UserModule,
     PromptModule,

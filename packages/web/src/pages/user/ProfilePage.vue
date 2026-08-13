@@ -29,21 +29,47 @@ const pwdDialogVisible = ref(false);
 const oldPassword = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
+const verifyCode = ref('');
 const pwdLoading = ref(false);
+const codeLoading = ref(false);
+let codeTimer: ReturnType<typeof setInterval> | null = null;
+const codeCountdown = ref(0);
+
+async function onSendCode() {
+  const email = userStore.user?.email;
+  if (!email) return ElMessage.warning('账号未绑定邮箱');
+  codeLoading.value = true;
+  try {
+    await api.post('/auth/send-code', { email, purpose: 'change-password' });
+    ElMessage.success('验证码已发送到 ' + email);
+    codeCountdown.value = 60;
+    if (codeTimer) clearInterval(codeTimer);
+    codeTimer = setInterval(() => {
+      codeCountdown.value--;
+      if (codeCountdown.value <= 0 && codeTimer) { clearInterval(codeTimer); codeTimer = null; }
+    }, 1000);
+  } catch (e: any) {
+    ElMessage.error(e.response?.data?.message || '发送失败');
+  }
+  codeLoading.value = false;
+}
 
 async function onChangePassword() {
   if (!oldPassword.value || !newPassword.value) return ElMessage.warning('请填写完整');
   if (newPassword.value.length < 6) return ElMessage.warning('新密码至少6位');
   if (newPassword.value !== confirmPassword.value) return ElMessage.warning('两次密码不一致');
+  if (!verifyCode.value) return ElMessage.warning('请输入邮箱验证码');
   pwdLoading.value = true;
   try {
     await api.post('/auth/change-password', {
       oldPassword: oldPassword.value,
       newPassword: newPassword.value,
+      email: userStore.user?.email,
+      code: verifyCode.value,
     });
     ElMessage.success('密码修改成功');
     pwdDialogVisible.value = false;
-    oldPassword.value = ''; newPassword.value = ''; confirmPassword.value = '';
+    oldPassword.value = ''; newPassword.value = ''; confirmPassword.value = ''; verifyCode.value = '';
   } catch (e: any) {
     ElMessage.error(e.response?.data?.message || '修改失败');
   }
@@ -91,6 +117,15 @@ async function onChangePassword() {
         </el-form-item>
         <el-form-item label="确认密码">
           <el-input v-model="confirmPassword" type="password" show-password placeholder="再次输入新密码" />
+        </el-form-item>
+        <el-form-item label="邮箱验证">
+          <div class="flex gap-2 w-full">
+            <el-input v-model="verifyCode" placeholder="6位验证码" maxlength="6" class="flex-1" />
+            <el-button :loading="codeLoading" :disabled="codeCountdown > 0" @click="onSendCode">
+              {{ codeCountdown > 0 ? codeCountdown + 's' : '发送验证码' }}
+            </el-button>
+          </div>
+          <div class="text-xs text-gray-400 mt-1">验证码将发送至 {{ userStore.user?.email }}</div>
         </el-form-item>
       </el-form>
       <template #footer>

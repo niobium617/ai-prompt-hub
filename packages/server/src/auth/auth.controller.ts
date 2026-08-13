@@ -1,13 +1,17 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { MailService } from '../common/mail/mail.service';
 
 @ApiTags('认证')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailService: MailService,
+  ) {}
 
   @Post('register')
   @ApiOperation({ summary: '邮箱注册' })
@@ -27,14 +31,28 @@ export class AuthController {
     return this.authService.refreshToken(refreshToken);
   }
 
+  @Post('send-code')
+  @ApiOperation({ summary: '发送邮箱验证码' })
+  async sendCode(@Body() body: { email: string; purpose: 'change-password' | 'register' }) {
+    try {
+      const result = await this.mailService.sendCode(body.email, body.purpose || 'change-password');
+      return { success: true, ...result };
+    } catch (e: any) {
+      throw new BadRequestException(e.message || '发送失败');
+    }
+  }
+
   @Post('change-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '修改密码' })
+  @ApiOperation({ summary: '修改密码（需邮箱验证码）' })
   changePassword(
     @Request() req: any,
-    @Body() body: { oldPassword: string; newPassword: string },
+    @Body() body: { oldPassword: string; newPassword: string; email: string; code: string },
   ) {
+    if (!this.mailService.verifyCode(body.email, body.code)) {
+      throw new BadRequestException('验证码错误或已过期');
+    }
     return this.authService.changePassword(req.user.id, body.oldPassword, body.newPassword);
   }
 }
