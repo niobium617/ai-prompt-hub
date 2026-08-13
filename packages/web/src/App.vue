@@ -17,11 +17,6 @@ const userStore = useUserStore();
             <router-link to="/" class="text-lg md:text-xl font-bold text-primary-600 whitespace-nowrap">
               🚀 AI Prompt Hub
             </router-link>
-            <!-- 移动端首页按钮 -->
-            <router-link to="/" class="md:hidden px-3 py-1 rounded-full text-sm font-medium"
-              :class="route.path === '/' ? 'bg-primary-50 text-primary-600' : 'text-gray-600 bg-gray-100'">
-              🏠 首页
-            </router-link>
             <nav class="hidden md:flex items-center gap-6">
               <router-link to="/" class="text-gray-600 hover:text-primary-600 transition text-sm"
                 :class="route.path === '/' ? 'text-primary-600 font-semibold' : ''">首页</router-link>
