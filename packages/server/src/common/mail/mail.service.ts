@@ -33,7 +33,7 @@ export class MailService {
   /**
    * 发送验证码邮件
    */
-  async sendCode(to: string, purpose: 'change-password' | 'register'): Promise<{ devCode?: string }> {
+  async sendCode(to: string, purpose: 'change-password' | 'register' | 'login'): Promise<{ devCode?: string }> {
     // 检查发送频率（60秒内不允许重发）
     const existing = this.codeStore.get(to);
     if (existing && Date.now() - existing.expires < 4 * 60 * 1000) {
@@ -43,7 +43,9 @@ export class MailService {
     const code = String(Math.floor(100000 + Math.random() * 900000));
     this.codeStore.set(to, { code, expires: Date.now() + 5 * 60 * 1000 });
 
-    const subject = purpose === 'register' ? '【AI Prompt Hub】注册验证码' : '【AI Prompt Hub】修改密码验证码';
+    const subject = purpose === 'register' ? '【AI Prompt Hub】注册验证码'
+      : purpose === 'login' ? '【AI Prompt Hub】登录验证码'
+      : '【AI Prompt Hub】修改密码验证码';
     const html = `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto">
         <h2 style="color:#3b82f6">🚀 AI Prompt Hub</h2>

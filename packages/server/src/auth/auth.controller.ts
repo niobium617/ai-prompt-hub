@@ -33,26 +33,35 @@ export class AuthController {
 
   @Post('send-code')
   @ApiOperation({ summary: '发送邮箱验证码' })
-  async sendCode(@Body() body: { email: string; purpose: 'change-password' | 'register' }) {
+  async sendCode(@Body() body: { email: string; purpose: 'change-password' | 'register' | 'login' }) {
     try {
-      const result = await this.mailService.sendCode(body.email, body.purpose || 'change-password');
+      const result = await this.mailService.sendCode(body.email, body.purpose || 'login');
       return { success: true, ...result };
     } catch (e: any) {
       throw new BadRequestException(e.message || '发送失败');
     }
   }
 
+  @Post('login/code')
+  @ApiOperation({ summary: '邮箱验证码登录（未注册自动创建账号）' })
+  async loginByCode(@Body() body: { email: string; code: string }) {
+    if (!this.mailService.verifyCode(body.email, body.code)) {
+      throw new BadRequestException('验证码错误或已过期');
+    }
+    return this.authService.loginByCode(body.email);
+  }
+
   @Post('change-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '修改密码（需邮箱验证码）' })
+  @ApiOperation({ summary: '修改密码（只需邮箱验证码）' })
   changePassword(
     @Request() req: any,
-    @Body() body: { oldPassword: string; newPassword: string; email: string; code: string },
+    @Body() body: { newPassword: string; email: string; code: string },
   ) {
     if (!this.mailService.verifyCode(body.email, body.code)) {
       throw new BadRequestException('验证码错误或已过期');
     }
-    return this.authService.changePassword(req.user.id, body.oldPassword, body.newPassword);
+    return this.authService.changePassword(req.user.id, body.newPassword);
   }
 }

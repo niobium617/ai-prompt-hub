@@ -70,14 +70,30 @@ export class AuthService {
     }
   }
 
-  async changePassword(userId: number, oldPassword: string, newPassword: string) {
+  async loginByCode(email: string) {
+    let user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      // 未注册用户自动创建
+      const username = 'user_' + email.split('@')[0] + Math.floor(Math.random() * 10000);
+      user = await this.prisma.user.create({
+        data: {
+          username,
+          email,
+          passwordHash: '', // 验证码登录用户初始无密码
+          nickname: email.split('@')[0],
+        },
+      });
+    }
+    if (user.status === 0) {
+      throw new UnauthorizedException('账号已被禁用');
+    }
+    return this.generateTokens(user.id, user.role);
+  }
+
+  async changePassword(userId: number, newPassword: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new UnauthorizedException('用户不存在');
-    }
-    const valid = await bcrypt.compare(oldPassword, user.passwordHash);
-    if (!valid) {
-      throw new UnauthorizedException('原密码错误');
     }
     const passwordHash = await bcrypt.hash(newPassword, 12);
     await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });

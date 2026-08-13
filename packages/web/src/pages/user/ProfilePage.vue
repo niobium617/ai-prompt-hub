@@ -26,7 +26,6 @@ async function onSave() {
 
 // 修改密码
 const pwdDialogVisible = ref(false);
-const oldPassword = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
 const verifyCode = ref('');
@@ -55,21 +54,20 @@ async function onSendCode() {
 }
 
 async function onChangePassword() {
-  if (!oldPassword.value || !newPassword.value) return ElMessage.warning('请填写完整');
+  if (!newPassword.value) return ElMessage.warning('请输入新密码');
   if (newPassword.value.length < 6) return ElMessage.warning('新密码至少6位');
   if (newPassword.value !== confirmPassword.value) return ElMessage.warning('两次密码不一致');
   if (!verifyCode.value) return ElMessage.warning('请输入邮箱验证码');
   pwdLoading.value = true;
   try {
     await api.post('/auth/change-password', {
-      oldPassword: oldPassword.value,
       newPassword: newPassword.value,
       email: userStore.user?.email,
       code: verifyCode.value,
     });
     ElMessage.success('密码修改成功');
     pwdDialogVisible.value = false;
-    oldPassword.value = ''; newPassword.value = ''; confirmPassword.value = ''; verifyCode.value = '';
+    newPassword.value = ''; confirmPassword.value = ''; verifyCode.value = '';
   } catch (e: any) {
     ElMessage.error(e.response?.data?.message || '修改失败');
   }
@@ -109,9 +107,6 @@ async function onChangePassword() {
     <!-- 修改密码弹窗 -->
     <el-dialog v-model="pwdDialogVisible" title="修改密码" width="90%" style="max-width: 420px">
       <el-form @submit.prevent="onChangePassword">
-        <el-form-item label="原密码">
-          <el-input v-model="oldPassword" type="password" show-password placeholder="输入当前密码" />
-        </el-form-item>
         <el-form-item label="新密码">
           <el-input v-model="newPassword" type="password" show-password placeholder="至少6位" />
         </el-form-item>
