@@ -53,13 +53,12 @@ function onTagClick(tag: string) {
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- 顶部导航 -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
+    <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div class="container">
-        <!-- 第一行：logo + 用户区 -->
-        <div class="flex items-center justify-between h-12 md:h-16">
+        <div class="flex items-center justify-between h-14 md:h-16">
           <div class="flex items-center gap-4 md:gap-8 min-w-0">
-            <router-link to="/" class="text-base md:text-xl font-bold text-primary-600 whitespace-nowrap">
-              🚀 <span class="hidden sm:inline">AI Prompt Hub</span><span class="sm:hidden">APH</span>
+            <router-link to="/" class="text-lg md:text-xl font-bold text-primary-600 whitespace-nowrap">
+              🚀 AI Prompt Hub
             </router-link>
             <nav class="hidden md:flex items-center gap-6">
               <router-link to="/prompts" class="text-gray-600 hover:text-primary-600 transition text-sm">提示词广场</router-link>
@@ -69,7 +68,7 @@ function onTagClick(tag: string) {
               <router-link to="/tutorials" class="text-gray-600 hover:text-primary-600 transition text-sm">📖 教程</router-link>
             </nav>
           </div>
-          <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
+          <div class="flex items-center gap-3 md:gap-4 flex-shrink-0">
             <template v-if="userStore.isLoggedIn">
               <el-dropdown trigger="click">
                 <span class="text-gray-700 cursor-pointer text-sm font-medium whitespace-nowrap">
@@ -138,52 +137,8 @@ function onTagClick(tag: string) {
           </div>
         </div>
 
-        <!-- 第二行：移动端搜索 -->
-        <div class="md:hidden pb-2.5">
-          <div class="flex items-center bg-gray-100 rounded-full px-3 py-1.5" @click="onSearchFocus">
-            <span class="text-gray-400 mr-1.5 text-sm">🔍</span>
-            <input
-              v-model="searchKeyword"
-              type="text"
-              placeholder="搜索提示词..."
-              class="bg-transparent border-none outline-none text-sm w-full text-gray-700 placeholder-gray-400"
-              @focus="onSearchFocus"
-              @blur="onSearchBlur"
-              @keyup.enter="doSearch()"
-            />
-          </div>
-        </div>
       </div>
     </header>
-
-    <!-- 搜索浮层（聚焦时全局显示） -->
-    <div v-if="searchFocus" class="fixed inset-0 bg-black/30 z-40 md:hidden" @click="searchFocus = false"></div>
-    <div v-if="searchFocus" class="md:hidden fixed top-[96px] inset-x-4 bg-white rounded-xl shadow-xl border z-50 overflow-hidden">
-      <div v-if="suggestions.length">
-        <div class="px-4 py-2 text-xs text-gray-400 font-medium">搜索建议</div>
-        <div
-          v-for="s in suggestions" :key="s.id"
-          class="px-4 py-2.5 hover:bg-gray-50 cursor-pointer text-sm flex items-center gap-2"
-          @mousedown.prevent="doSearch(s.title)"
-        >
-          <span class="text-gray-400">🔍</span>
-          <span>{{ s.title }}</span>
-        </div>
-      </div>
-      <div v-if="!searchKeyword && hotTags.length">
-        <div class="px-4 py-2 text-xs text-gray-400 font-medium">🔥 热门搜索</div>
-        <div class="flex flex-wrap gap-2 px-4 pb-3">
-          <span
-            v-for="t in hotTags" :key="t"
-            class="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-600 cursor-pointer hover:bg-primary-50 hover:text-primary-600 transition"
-            @mousedown.prevent="onTagClick(t)"
-          >{{ t }}</span>
-        </div>
-      </div>
-      <div v-if="searchKeyword && !suggestions.length" class="px-4 py-6 text-center text-sm text-gray-400">
-        暂无匹配结果，按回车搜索 "{{ searchKeyword }}"
-      </div>
-    </div>
 
     <!-- 页面内容 -->
     <main class="container py-4 md:py-6 flex-1 pb-20 md:pb-6">
