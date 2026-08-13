@@ -70,6 +70,20 @@ export class AuthService {
     }
   }
 
+  async changePassword(userId: number, oldPassword: string, newPassword: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException('用户不存在');
+    }
+    const valid = await bcrypt.compare(oldPassword, user.passwordHash);
+    if (!valid) {
+      throw new UnauthorizedException('原密码错误');
+    }
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+    return { success: true };
+  }
+
   private generateTokens(userId: number, role: string) {
     const payload = { sub: Number(userId), role };
     return {
