@@ -12,8 +12,8 @@ const searchKeyword = ref('');
 
 onMounted(async () => {
   const [hotRes, featRes, catRes] = await Promise.all([
-    api.get('/prompts/hot', { params: { limit: 6 } }),
-    api.get('/prompts/featured', { params: { limit: 6 } }),
+    api.get('/prompts/hot', { limit: 6 }),
+    api.get('/prompts/featured', { limit: 6 }),
     api.get('/categories'),
   ]);
   hotPrompts.value = hotRes;

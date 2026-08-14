@@ -27,10 +27,17 @@ async function fetchPrompts() {
   loading.value = true;
   try {
     const res = await api.get('/prompts', {
-      params: { page: page.value, pageSize: 12, categoryId: categoryId.value, difficulty: difficulty.value, sort: sort.value },
+      page: page.value,
+      pageSize: 12,
+      categoryId: categoryId.value,
+      difficulty: difficulty.value,
+      sort: sort.value,
     });
     prompts.value = res.items;
     total.value = res.total;
+  } catch (e: any) {
+    const msg = e?.response?.data?.message;
+    console.error('加载失败:', Array.isArray(msg) ? msg.join('；') : (msg || e.message));
   } finally {
     loading.value = false;
   }

@@ -20,7 +20,7 @@ onMounted(async () => {
 });
 
 async function fetchComments() {
-  const res = await api.get('/comments', { params: { targetType: 'prompt', targetId: route.params.id } });
+  const res = await api.get('/comments', { targetType: 'prompt', targetId: route.params.id });
   comments.value = res.items;
 }
 

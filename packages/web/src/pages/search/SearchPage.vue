@@ -19,7 +19,7 @@ async function doSearch() {
   if (!keyword.value.trim()) return;
   loading.value = true;
   try {
-    const res = await api.get('/search', { params: { keyword: keyword.value, page: page.value } });
+    const res = await api.get('/search', { keyword: keyword.value, page: page.value });
     prompts.value = res.items;
     total.value = res.total;
   } finally { loading.value = false; }
@@ -32,7 +32,7 @@ watch(keyword, (val) => {
   clearTimeout(debounceTimer);
   if (!val) { suggestions.value = []; return; }
   debounceTimer = setTimeout(async () => {
-    const res = await api.get('/search/suggestions', { params: { keyword: val } });
+    const res = await api.get('/search/suggestions', { keyword: val });
     suggestions.value = res;
   }, 300);
 });
