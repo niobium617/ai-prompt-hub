@@ -37,6 +37,25 @@ async function reject(id: number) {
     fetchData();
   } catch { /* cancelled */ }
 }
+
+async function removePrompt(id: number, title: string) {
+  try {
+    const { value: reason } = await ElMessageBox.prompt(
+      `删除《${title}》后不可恢复，将通知作者。请填写删除原因：`,
+      '删除提示词',
+      {
+        type: 'warning',
+        confirmButtonText: '删除并通知',
+        confirmButtonClass: 'el-button--danger',
+        inputPlaceholder: '如：内容违规 / 广告 / 重复内容',
+        inputValidator: (v: string) => !!v.trim() || '请填写删除原因',
+      },
+    );
+    await api.delete(`/admin/prompts/${id}`, { data: { reason } });
+    ElMessage.success('已删除并通知作者');
+    fetchData();
+  } catch { /* cancelled */ }
+}
 </script>
 
 <template>
@@ -73,6 +92,7 @@ async function reject(id: number) {
             <div class="flex gap-2">
               <el-button size="small" type="success" @click="approve(p.id)">通过</el-button>
               <el-button size="small" type="danger" @click="reject(p.id)">驳回</el-button>
+              <el-button size="small" type="danger" plain @click="removePrompt(p.id, p.title)">🗑 删除</el-button>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -32,5 +32,11 @@ export class AdminController {
   @ApiOperation({ summary: '数据统计' })
   stats(@Request() req: any) {
     return this.adminService.stats(req.user.role);
+  }
+
+  @Delete('prompts/:id')
+  @ApiOperation({ summary: '删除提示词并通知作者' })
+  deletePrompt(@Param('id') id: string, @Request() req: any, @Body('reason') reason?: string) {
+    return this.adminService.deletePrompt(+id, req.user.role, reason);
   }
 }

@@ -43,8 +43,8 @@ const api = {
     client.post(url, data, config) as unknown as Promise<T>,
   put: <T = any>(url: string, data?: any): Promise<T> =>
     client.put(url, data) as unknown as Promise<T>,
-  delete: <T = any>(url: string): Promise<T> =>
-    client.delete(url) as unknown as Promise<T>,
+  delete: <T = any>(url: string, data?: any): Promise<T> =>
+    client.delete(url, { data }) as unknown as Promise<T>,
 };
 
 export default api;

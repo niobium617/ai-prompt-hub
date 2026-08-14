@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { CreatePromptDto, UpdatePromptDto, QueryPromptDto } from './dto/prompt.dto';
 
@@ -121,6 +121,26 @@ export class PromptService {
 
   async recordCopy(id: number) {
     await this.prisma.prompt.update({ where: { id: id }, data: { useCount: { increment: 1 } } });
+    return { success: true };
+  }
+
+  /**
+   * 删除提示词（作者本人或管理员）
+   */
+  async remove(id: number, userId: number, userRole: string) {
+    const prompt = await this.prisma.prompt.findUnique({ where: { id: id } });
+    if (!prompt) throw new NotFoundException('提示词不存在');
+    if (prompt.authorId !== userId && userRole !== 'admin' && userRole !== 'super_admin') {
+      throw new ForbiddenException('无权删除他人内容');
+    }
+    // 级联删除关联数据
+    await this.prisma.$transaction([
+      this.prisma.rating.deleteMany({ where: { promptId: id } }),
+      this.prisma.promptTag.deleteMany({ where: { promptId: id } }),
+      this.prisma.favorite.deleteMany({ where: { targetType: 'prompt', targetId: id } }),
+      this.prisma.comment.deleteMany({ where: { targetType: 'prompt', targetId: id } }),
+      this.prisma.prompt.delete({ where: { id: id } }),
+    ]);
     return { success: true };
   }
 

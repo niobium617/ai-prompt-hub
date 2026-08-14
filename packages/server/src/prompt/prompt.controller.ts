@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Query, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Query, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PromptService } from './prompt.service';
 import { CreatePromptDto, UpdatePromptDto, QueryPromptDto } from './dto/prompt.dto';
@@ -53,5 +53,13 @@ export class PromptController {
   @ApiOperation({ summary: '记录使用次数' })
   recordCopy(@Param('id') id: string) {
     return this.promptService.recordCopy(+id);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '删除提示词（作者或管理员）' })
+  remove(@Param('id') id: string, @Request() req: any) {
+    return this.promptService.remove(+id, req.user.id, req.user.role);
   }
 }

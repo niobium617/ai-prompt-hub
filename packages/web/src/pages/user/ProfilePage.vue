@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useUserStore } from '@/stores/user';
 import api from '@/api';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import PromptCard from '@/components/PromptCard.vue';
 
 const userStore = useUserStore();
@@ -51,6 +51,26 @@ async function onSendCode() {
     ElMessage.error(e.response?.data?.message || '发送失败');
   }
   codeLoading.value = false;
+}
+
+async function onDeletePrompt(p: any) {
+  try {
+    await ElMessageBox.confirm(`确认删除《${p.title}》？删除后不可恢复`, '删除提示词', {
+      type: 'warning',
+      confirmButtonText: '确认删除',
+      confirmButtonClass: 'el-button--danger',
+    });
+  } catch {
+    return; // 用户取消
+  }
+  try {
+    await api.delete(`/prompts/${p.id}`);
+    ElMessage.success('已删除');
+    const res = await api.get('/user/prompts', { page: 1, pageSize: 10 });
+    myPrompts.value = res.items;
+  } catch (e: any) {
+    ElMessage.error(e.response?.data?.message || '删除失败');
+  }
 }
 
 async function onChangePassword() {
@@ -132,7 +152,14 @@ async function onChangePassword() {
     <div class="bg-white rounded-xl p-6">
       <h2 class="font-semibold mb-4">📝 我的投稿</h2>
       <div v-if="myPrompts.length" class="space-y-3">
-        <PromptCard v-for="p in myPrompts" :key="p.id" :prompt="p" />
+        <div v-for="p in myPrompts" :key="p.id" class="relative">
+          <PromptCard :prompt="p" />
+          <el-button
+            size="small" type="danger" plain
+            class="absolute top-2 right-2 z-10"
+            @click.stop="onDeletePrompt(p)"
+          >🗑 删除</el-button>
+        </div>
       </div>
       <div v-else class="text-center text-gray-400 py-8">
         <p>暂无投稿</p>

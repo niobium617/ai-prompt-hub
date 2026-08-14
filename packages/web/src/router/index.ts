@@ -77,6 +77,12 @@ const router = createRouter({
       meta: { title: '我的收藏', requiresAuth: true },
     },
     {
+      path: '/user/notifications',
+      name: 'notifications',
+      component: () => import('../pages/user/NotificationsPage.vue'),
+      meta: { title: '通知中心', requiresAuth: true },
+    },
+    {
       path: '/user/submit',
       name: 'submit',
       component: () => import('../pages/user/SubmitPage.vue'),

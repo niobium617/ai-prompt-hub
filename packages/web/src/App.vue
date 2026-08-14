@@ -1,10 +1,27 @@
 <script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import api from '@/api';
 
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
+
+// 未读通知数
+const unreadCount = ref(0);
+
+async function fetchUnread() {
+  if (!userStore.isLoggedIn) { unreadCount.value = 0; return; }
+  try {
+    const res = await api.get('/user/notifications', { pageSize: 1 });
+    unreadCount.value = res.unreadCount || 0;
+  } catch { unreadCount.value = 0; }
+}
+
+onMounted(fetchUnread);
+watch(() => userStore.isLoggedIn, fetchUnread);
+watch(() => route.fullPath, fetchUnread);
 </script>
 
 <template>
@@ -29,6 +46,14 @@ const userStore = useUserStore();
           </div>
           <div class="flex items-center gap-3 md:gap-4 flex-shrink-0">
             <template v-if="userStore.isLoggedIn">
+              <!-- 通知铃铛 -->
+              <router-link to="/user/notifications" class="relative" title="通知">
+                <span class="text-lg">🔔</span>
+                <span
+                  v-if="unreadCount > 0"
+                  class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] min-w-[16px] h-4 px-0.5 rounded-full flex items-center justify-center font-medium"
+                >{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+              </router-link>
               <el-dropdown trigger="click">
                 <span class="text-gray-700 cursor-pointer text-sm font-medium whitespace-nowrap">
                   {{ (userStore.user?.nickname || '用户').slice(0, 6) }} ▾

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { CreateArticleDto } from './dto/article.dto';
 
@@ -49,5 +49,22 @@ export class ArticleService {
       },
     });
     return { ...article, id: Number(article.id) };
+  }
+
+  /**
+   * 删除文章（作者本人或管理员）
+   */
+  async remove(id: number, userId: number, userRole: string) {
+    const article = await this.prisma.article.findUnique({ where: { id: id } });
+    if (!article) throw new NotFoundException('文章不存在');
+    if (article.authorId !== userId && userRole !== 'admin' && userRole !== 'super_admin') {
+      throw new ForbiddenException('无权删除他人内容');
+    }
+    await this.prisma.$transaction([
+      this.prisma.comment.deleteMany({ where: { targetType: 'article', targetId: id } }),
+      this.prisma.favorite.deleteMany({ where: { targetType: 'article', targetId: id } }),
+      this.prisma.article.delete({ where: { id: id } }),
+    ]);
+    return { success: true };
   }
 }

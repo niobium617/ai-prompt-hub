@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/article.dto';
@@ -27,5 +27,13 @@ export class ArticleController {
   @ApiOperation({ summary: '创建文章' })
   create(@Request() req: any, @Body() dto: CreateArticleDto) {
     return this.articleService.create(req.user.id, dto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '删除文章（作者或管理员）' })
+  remove(@Param('id') id: string, @Request() req: any) {
+    return this.articleService.remove(+id, req.user.id, req.user.role);
   }
 }

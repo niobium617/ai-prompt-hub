@@ -30,6 +30,7 @@ model User {
   favorites   Favorite[]
   ratings     Rating[]
   viewHistory ViewHistory[]
+  notifications Notification[]
 
   @@index([email])
   @@index([status])
@@ -210,4 +211,20 @@ model AITool {
 
   @@index([category])
   @@map("ai_tools")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  type      String   @db.VarChar(20)
+  title     String   @db.VarChar(100)
+  content   String   @db.VarChar(500)
+  isRead    Int      @default(0) @map("is_read") @db.TinyInt
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@map("notifications")
 }
