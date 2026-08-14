@@ -39,15 +39,27 @@ async function onSendCode() {
   codeLoading.value = false;
 }
 
+// 提取后端错误信息（兼容多种返回格式）
+function extractError(e: any): string {
+  const msg = e?.response?.data?.message;
+  if (Array.isArray(msg)) return msg.join('；');
+  if (typeof msg === 'string') return msg;
+  return '请求失败，请稍后再试';
+}
+
+const loginError = ref('');
+
 async function onPasswordLogin() {
   if (!email.value || !password.value) return ElMessage.warning('请填写完整');
   loading.value = true;
+  loginError.value = '';
   try {
     await userStore.login(email.value, password.value);
     ElMessage.success('登录成功');
     router.push('/');
   } catch (e: any) {
-    ElMessage.error(e.response?.data?.message || '登录失败');
+    loginError.value = extractError(e);
+    ElMessage.error(loginError.value);
   }
   loading.value = false;
 }
@@ -93,6 +105,10 @@ async function onCodeLogin() {
         <el-form-item>
           <el-input v-model="password" type="password" placeholder="密码" size="large" show-password @keyup.enter="onPasswordLogin" />
         </el-form-item>
+        <!-- 内联错误提示 -->
+        <div v-if="loginError" class="bg-red-50 text-red-500 text-sm rounded-lg px-4 py-2.5 mb-4">
+          ⚠️ {{ loginError }}
+        </div>
         <el-form-item>
           <el-button type="primary" size="large" class="w-full" :loading="loading" @click="onPasswordLogin">登录</el-button>
         </el-form-item>

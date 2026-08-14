@@ -19,8 +19,10 @@ export const useUserStore = defineStore('user', () => {
     inited.value = true;
   }
 
-  async function login(email: string, password: string) {
-    const res = await api.post('/auth/login', { email, password });
+  async function login(account: string, password: string) {
+    // 含 @ 按邮箱，否则按用户名
+    const payload = account.includes('@') ? { email: account, password } : { username: account, password };
+    const res = await api.post('/auth/login', payload);
     token.value = res.accessToken;
     localStorage.setItem('accessToken', res.accessToken);
     localStorage.setItem('refreshToken', res.refreshToken);
