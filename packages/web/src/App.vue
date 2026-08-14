@@ -57,12 +57,12 @@ const userStore = useUserStore();
     </header>
 
     <!-- 页面内容 -->
-    <main class="container py-4 md:py-6 flex-1 pb-20 md:pb-6">
+    <main class="container page-main py-4 md:py-6 flex-1">
       <router-view />
     </main>
 
     <!-- 移动端底部导航 -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t flex z-50">
+    <nav class="bottom-tabbar md:hidden fixed bottom-0 inset-x-0 bg-white border-t flex z-50">
       <router-link to="/" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs"
         :class="route.path === '/' ? 'text-primary-600' : 'text-gray-500'">
         <span class="text-lg">🏠</span>首页

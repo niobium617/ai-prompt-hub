@@ -36,6 +36,21 @@ a {
   padding: 0 16px;
 }
 
+/* 主内容区：为底部Tab栏预留空间（移动端） */
+.page-main {
+  padding-bottom: calc(60px + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .page-main {
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* 底部Tab栏：iPhone安全区适配 */
+.bottom-tabbar {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
