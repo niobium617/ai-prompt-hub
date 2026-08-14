@@ -9,13 +9,21 @@ const userStore = useUserStore();
 const nickname = ref('');
 const bio = ref('');
 const myPrompts = ref<any[]>([]);
+const myTotal = ref(0);
+const myPage = ref(1);
+const myPageSize = 10;
+
+async function fetchMyPrompts() {
+  const res = await api.get('/user/prompts', { page: myPage.value, pageSize: myPageSize });
+  myPrompts.value = res.items;
+  myTotal.value = res.total;
+}
 
 onMounted(async () => {
   await userStore.init();
   nickname.value = userStore.user?.nickname || '';
   bio.value = userStore.user?.bio || '';
-  const res = await api.get('/user/prompts', { params: { page: 1, pageSize: 10 } });
-  myPrompts.value = res.items;
+  fetchMyPrompts();
 });
 
 async function onSave() {
@@ -153,7 +161,7 @@ async function onChangePassword() {
     </el-dialog>
 
     <div class="bg-white rounded-xl p-6">
-      <h2 class="font-semibold mb-4">📝 我的投稿</h2>
+      <h2 class="font-semibold mb-4">📝 我的投稿（共 {{ myTotal }} 条）</h2>
       <div v-if="myPrompts.length" class="space-y-3">
         <div v-for="p in myPrompts" :key="p.id">
           <PromptCard :prompt="p" />
@@ -170,6 +178,18 @@ async function onChangePassword() {
         <router-link to="/user/submit">
           <el-button type="primary" size="small" class="mt-3">去提交第一个提示词</el-button>
         </router-link>
+      </div>
+      <!-- 分页 -->
+      <div v-if="myTotal > myPageSize" class="flex justify-center mt-4">
+        <el-pagination
+          v-model:current-page="myPage"
+          :page-size="myPageSize"
+          :total="myTotal"
+          layout="prev, pager, next"
+          background
+          small
+          @current-change="fetchMyPrompts"
+        />
       </div>
     </div>
   </div>
