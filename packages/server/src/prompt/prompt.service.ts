@@ -34,7 +34,7 @@ export class PromptService {
         skip: ((Number(page) || 1) - 1) * (Number(pageSize) || 12),
         take: (Number(pageSize) || 12),
         orderBy,
-        include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true } } },
+        include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true, username: true } } },
       }),
       this.prisma.prompt.count({ where }),
     ]);
@@ -55,7 +55,7 @@ export class PromptService {
   async findById(id: number) {
     const prompt = await this.prisma.prompt.findUnique({
       where: { id: id },
-      include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true } } },
+      include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true, username: true } } },
     });
     if (!prompt) throw new NotFoundException('提示词不存在');
 

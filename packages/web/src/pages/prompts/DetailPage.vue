@@ -66,7 +66,7 @@ async function onSubmitComment() {
       <h1 class="text-2xl font-bold mb-3">{{ prompt.title }}</h1>
       <p class="text-gray-500 mb-4">{{ prompt.description }}</p>
       <div class="flex items-center gap-4 text-sm text-gray-400">
-        <span>作者：{{ prompt.author?.nickname }}</span>
+        <span>作者：{{ prompt.author?.nickname }} <span class="text-gray-300">@{{ prompt.author?.username }}</span></span>
         <span>👁 {{ prompt.viewCount }}</span>
         <span>⭐ {{ prompt.ratingAvg }}</span>
         <span>❤ {{ prompt.favoriteCount }}</span>
