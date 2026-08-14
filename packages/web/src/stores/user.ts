@@ -6,11 +6,21 @@ export const useUserStore = defineStore('user', () => {
   const user = ref<any>(null);
   const token = ref(localStorage.getItem('accessToken') || '');
   const inited = ref(false);
+  const devMode = ref(false);
 
   const isLoggedIn = computed(() => !!token.value);
   const isAdmin = computed(() => user.value?.role === 'admin' || user.value?.role === 'super_admin');
+  /** 开发模式下的测试账号（可写操作） */
+  const isDevTester = computed(() => {
+    if (!user.value) return false;
+    return user.value.role === 'admin' || user.value.role === 'super_admin' || [1, 2].includes(user.value.id);
+  });
 
   async function init() {
+    try {
+      const cfg = await api.get('/config');
+      devMode.value = !!cfg.devMode;
+    } catch { devMode.value = false; }
     if (token.value) {
       try {
         user.value = await api.get('/user/profile');
@@ -44,5 +54,5 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('refreshToken');
   }
 
-  return { user, token, inited, isLoggedIn, isAdmin, init, login, register, logout };
+  return { user, token, inited, isLoggedIn, isAdmin, isDevTester, devMode, init, login, register, logout };
 });

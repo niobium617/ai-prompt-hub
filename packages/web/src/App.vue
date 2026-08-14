@@ -34,6 +34,10 @@ watch(() => route.fullPath, fetchUnread);
             <router-link to="/" class="text-lg md:text-xl font-bold text-primary-600 whitespace-nowrap">
               🚀 AI Prompt Hub
             </router-link>
+            <!-- 开发模式标识 -->
+            <span v-if="userStore.devMode" class="px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 text-xs font-medium whitespace-nowrap">
+              🔧 开发模式
+            </span>
             <nav class="hidden md:flex items-center gap-6">
               <router-link to="/" class="text-gray-600 hover:text-primary-600 transition text-sm"
                 :class="route.path === '/' ? 'text-primary-600 font-semibold' : ''">首页</router-link>
@@ -62,8 +66,10 @@ watch(() => route.fullPath, fetchUnread);
                   <el-dropdown-menu>
                     <el-dropdown-item @click="router.push('/user')">个人中心</el-dropdown-item>
                     <el-dropdown-item @click="router.push('/user/favorites')">我的收藏</el-dropdown-item>
-                    <el-dropdown-item @click="router.push('/user/submit')">提交提示词</el-dropdown-item>
-                    <el-dropdown-item @click="router.push('/article/new')">📝 发布文章</el-dropdown-item>
+                    <template v-if="!userStore.devMode || userStore.isDevTester">
+                      <el-dropdown-item @click="router.push('/user/submit')">提交提示词</el-dropdown-item>
+                      <el-dropdown-item @click="router.push('/article/new')">📝 发布文章</el-dropdown-item>
+                    </template>
                     <el-dropdown-item v-if="userStore.isAdmin" @click="router.push('/admin')">管理后台</el-dropdown-item>
                     <el-dropdown-item divided @click="userStore.logout(); router.push('/')">退出登录</el-dropdown-item>
                   </el-dropdown-menu>

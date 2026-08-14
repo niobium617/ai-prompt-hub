@@ -6,6 +6,7 @@ import { PrismaModule } from './common/prisma/prisma.module';
 import { LlmModule } from './common/llm/llm.module';
 import { MailModule } from './common/mail/mail.module';
 import { NotificationModule } from './notification/notification.module';
+import { ConfigModule as SiteConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PromptModule } from './prompt/prompt.module';
@@ -34,6 +35,7 @@ import { join } from 'path';
     LlmModule,
     MailModule,
     NotificationModule,
+    SiteConfigModule,
     AuthModule,
     UserModule,
     PromptModule,

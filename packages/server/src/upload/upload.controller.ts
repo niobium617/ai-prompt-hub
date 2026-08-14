@@ -5,6 +5,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
@@ -13,7 +14,7 @@ import { existsSync, mkdirSync } from 'fs';
 @Controller('upload')
 export class UploadController {
   @Post('image')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DevWriteGuard)
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: '上传图片（文章/提示词配图）' })

@@ -11,7 +11,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  /** 开发模式白名单（测试账号） */
+  private readonly DEV_ALLOWED_EMAILS = ['admin@prompt-hub.local', 'test@prompt-hub.local'];
+
+  /** 开发模式是否允许该账号 */
+  private checkDevMode(email: string) {
+    if (process.env.DEV_MODE !== 'true') return;
+    if (!this.DEV_ALLOWED_EMAILS.includes(email)) {
+      throw new UnauthorizedException('开发模式：仅限测试账号登录');
+    }
+  }
+
   async register(dto: RegisterDto) {
+    this.checkDevMode(dto.email);
     const existing = await this.prisma.user.findFirst({
       where: {
         OR: [{ email: dto.email }, { username: dto.username }],
@@ -46,6 +58,8 @@ export class AuthService {
     if (user.status === 0) {
       throw new UnauthorizedException('账号已被禁用');
     }
+    // 开发模式：仅白名单邮箱可登录
+    this.checkDevMode(user.email);
 
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) {
@@ -71,6 +85,7 @@ export class AuthService {
   }
 
   async loginByCode(email: string) {
+    this.checkDevMode(email);
     let user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) {
       // 未注册用户自动创建

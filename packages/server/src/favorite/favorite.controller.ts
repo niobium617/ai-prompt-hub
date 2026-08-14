@@ -2,9 +2,10 @@ import { Controller, Get, Post, Delete, Query, Param, Body, UseGuards, Request }
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { FavoriteService } from './favorite.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 
 @ApiTags('收藏')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, DevWriteGuard)
 @ApiBearerAuth()
 @Controller('user/favorites')
 export class FavoriteController {

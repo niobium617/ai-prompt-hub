@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/comment.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 
 @ApiTags('评论')
 @Controller('comments')
@@ -16,7 +17,7 @@ export class CommentController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DevWriteGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '发表评论' })
   create(@Request() req: any, @Body() dto: CreateCommentDto) {

@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/article.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 
 @ApiTags('文章')
 @Controller('articles')
@@ -22,7 +23,7 @@ export class ArticleController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DevWriteGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建文章' })
   create(@Request() req: any, @Body() dto: CreateArticleDto) {
@@ -30,7 +31,7 @@ export class ArticleController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DevWriteGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除文章（作者或管理员）' })
   remove(@Param('id') id: string, @Request() req: any) {

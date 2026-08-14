@@ -100,9 +100,12 @@ async function onSubmitComment() {
     <!-- 评论区 -->
     <div class="bg-white rounded-xl p-6">
       <h2 class="font-semibold text-lg mb-4">💬 评论 ({{ comments.length }})</h2>
-      <div v-if="userStore.isLoggedIn" class="flex gap-3 mb-6">
+      <div v-if="userStore.isLoggedIn && (!userStore.devMode || userStore.isDevTester)" class="flex gap-3 mb-6">
         <el-input v-model="commentText" placeholder="写下你的评论..." type="textarea" :rows="3" />
         <el-button type="primary" @click="onSubmitComment" class="self-end">发表</el-button>
+      </div>
+      <div v-else-if="userStore.devMode" class="bg-orange-50 text-orange-600 text-sm rounded-lg px-4 py-3 mb-6">
+        🔧 开发模式：评论功能暂仅限测试账号
       </div>
       <div v-for="c in comments" :key="c.id" class="border-b py-4 last:border-0">
         <div class="flex items-center gap-2 mb-2">

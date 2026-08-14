@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PromptService } from './prompt.service';
 import { CreatePromptDto, UpdatePromptDto, QueryPromptDto } from './dto/prompt.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 
 @ApiTags('提示词')
 @Controller('prompts')
@@ -34,7 +35,7 @@ export class PromptController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DevWriteGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '提交提示词' })
   create(@Request() req: any, @Body() dto: CreatePromptDto) {
@@ -42,7 +43,7 @@ export class PromptController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DevWriteGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '编辑提示词' })
   update(@Param('id') id: string, @Request() req: any, @Body() dto: UpdatePromptDto) {
@@ -56,7 +57,7 @@ export class PromptController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, DevWriteGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除提示词（作者或管理员）' })
   remove(@Param('id') id: string, @Request() req: any) {
