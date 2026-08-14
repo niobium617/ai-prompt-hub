@@ -39,4 +39,22 @@ export class AdminController {
   deletePrompt(@Param('id') id: string, @Request() req: any, @Body('reason') reason?: string) {
     return this.adminService.deletePrompt(+id, req.user.role, reason);
   }
+
+  @Get('prompts/published')
+  @ApiOperation({ summary: '已发布提示词列表' })
+  getPublishedPrompts(@Request() req: any, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {
+    return this.adminService.getPublishedPrompts(page, pageSize, req.user.role);
+  }
+
+  @Get('articles/published')
+  @ApiOperation({ summary: '已发布文章列表' })
+  getPublishedArticles(@Request() req: any, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {
+    return this.adminService.getPublishedArticles(page, pageSize, req.user.role);
+  }
+
+  @Delete('articles/:id')
+  @ApiOperation({ summary: '删除文章并通知作者' })
+  deleteArticle(@Param('id') id: string, @Request() req: any, @Body('reason') reason?: string) {
+    return this.adminService.deleteArticle(+id, req.user.role, reason);
+  }
 }

@@ -104,7 +104,10 @@ async function onChangePassword() {
           {{ (userStore.user?.nickname || '用')[0] }}
         </el-avatar>
         <div>
-          <div class="text-lg font-semibold">{{ userStore.user?.nickname }}</div>
+          <div class="text-lg font-semibold">
+            {{ userStore.user?.nickname }}
+            <span class="text-sm font-normal text-gray-400">@{{ userStore.user?.username }}</span>
+          </div>
           <div class="text-sm text-gray-500">
             {{ userStore.user?.role === 'admin' ? '管理员' : '普通用户' }} · 积分 {{ userStore.user?.points }}
           </div>
@@ -152,13 +155,14 @@ async function onChangePassword() {
     <div class="bg-white rounded-xl p-6">
       <h2 class="font-semibold mb-4">📝 我的投稿</h2>
       <div v-if="myPrompts.length" class="space-y-3">
-        <div v-for="p in myPrompts" :key="p.id" class="relative">
+        <div v-for="p in myPrompts" :key="p.id">
           <PromptCard :prompt="p" />
-          <el-button
-            size="small" type="danger" plain
-            class="absolute top-2 right-2 z-10"
-            @click.stop="onDeletePrompt(p)"
-          >🗑 删除</el-button>
+          <div class="flex justify-end mt-1.5">
+            <el-button
+              size="small" type="danger" plain
+              @click="onDeletePrompt(p)"
+            >🗑 删除</el-button>
+          </div>
         </div>
       </div>
       <div v-else class="text-center text-gray-400 py-8">
