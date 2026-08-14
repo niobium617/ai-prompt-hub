@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 interface Tutorial {
   id: number;
@@ -208,10 +208,20 @@ Negative: low quality, bad anatomy, blurry, deformed, watermark`,
   },
 ]);
 
+const activeCategory = ref('全部');
 const selectedTutorial = ref<Tutorial | null>(null);
+const dialogVisible = ref(false);
 
-function selectTutorial(t: Tutorial) {
-  selectedTutorial.value = selectedTutorial.value?.id === t.id ? null : t;
+const categoryList = ['全部', 'AI对话', 'AI编程', 'AI绘画', '本地部署', 'AI开发框架', 'Prompt工程', 'AI搜索'];
+
+const filteredTutorials = computed(() => {
+  if (activeCategory.value === '全部') return tutorials.value;
+  return tutorials.value.filter(t => t.category === activeCategory.value);
+});
+
+function openTutorial(t: Tutorial) {
+  selectedTutorial.value = t;
+  dialogVisible.value = true;
 }
 </script>
 
@@ -224,63 +234,65 @@ function selectTutorial(t: Tutorial) {
 
     <!-- 分类筛选 -->
     <div class="flex flex-wrap gap-2 mb-6">
-      <el-tag v-for="cat in ['全部', 'AI对话', 'AI编程', 'AI绘画', '本地部署', 'AI开发框架', 'Prompt工程', 'AI搜索']" :key="cat" type="info" effect="plain" class="cursor-pointer hover:bg-primary-50">
-        {{ cat }}
-      </el-tag>
+      <button
+        v-for="cat in categoryList" :key="cat"
+        @click="activeCategory = cat"
+        class="px-4 py-1.5 rounded-full text-sm transition border"
+        :class="activeCategory === cat
+          ? 'bg-primary-500 text-white border-primary-500'
+          : 'bg-white text-gray-600 border-gray-200 hover:border-primary-300 hover:text-primary-600'"
+      >{{ cat }}</button>
     </div>
 
-    <!-- 教程列表 -->
-    <div class="space-y-4">
-      <div v-for="t in tutorials" :key="t.id" class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition">
-        <!-- 标题栏 -->
-        <div @click="selectTutorial(t)" class="p-5 cursor-pointer flex items-start gap-4">
-          <div class="text-3xl flex-shrink-0">{{ t.icon }}</div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-semibold text-gray-800">{{ t.title }}</h3>
-              <el-tag size="small" type="warning" effect="plain">{{ t.category }}</el-tag>
-            </div>
-            <p class="text-sm text-gray-500 leading-relaxed mb-2">{{ t.description }}</p>
-            <div class="flex items-center gap-3 text-xs text-gray-400">
-              <span class="flex items-center gap-1">🐙 <span class="text-primary-500 underline">{{ t.githubUrl.replace('https://github.com/', '') }}</span></span>
-              <span class="text-primary-500 cursor-pointer">{{ selectedTutorial?.id === t.id ? '收起 ▲' : '展开教程 ▼' }}</span>
-            </div>
-            <div class="flex gap-1 mt-2">
-              <el-tag v-for="tag in t.tags" :key="tag" size="small" type="info" effect="plain">{{ tag }}</el-tag>
-            </div>
-          </div>
+    <!-- 教程卡片网格（类似提示词卡片） -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div
+        v-for="t in filteredTutorials" :key="t.id"
+        @click="openTutorial(t)"
+        class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-lg transition border border-gray-100 hover:border-primary-200"
+      >
+        <div class="flex items-start justify-between mb-3">
+          <div class="text-3xl">{{ t.icon }}</div>
+          <el-tag size="small" type="warning" effect="plain">{{ t.category }}</el-tag>
         </div>
-
-        <!-- 展开的教程内容 -->
-        <div v-if="selectedTutorial?.id === t.id" class="border-t bg-gray-50 p-5 space-y-4">
-          <!-- GitHub 项目说明 -->
-          <div>
-            <h4 class="font-semibold text-sm mb-2 flex items-center gap-2">🐙 GitHub 项目</h4>
-            <a :href="t.githubUrl" target="_blank" class="inline-flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition">
-              <span>{{ t.githubUrl }}</span>
-              <span>↗</span>
-            </a>
-            <p class="text-sm text-gray-500 mt-2">{{ t.githubDesc }}</p>
-          </div>
-
-          <!-- 使用步骤 -->
-          <div>
-            <h4 class="font-semibold text-sm mb-2">📋 使用步骤</h4>
-            <ol class="space-y-1">
-              <li v-for="(step, i) in t.usageSteps" :key="i" class="text-sm text-gray-600 flex gap-2">
-                <span class="text-primary-500 font-bold">{{ i + 1 }}.</span>
-                <span>{{ step }}</span>
-              </li>
-            </ol>
-          </div>
-
-          <!-- Prompt 示例 -->
-          <div>
-            <h4 class="font-semibold text-sm mb-2">💬 Prompt 示例</h4>
-            <pre class="bg-gray-900 text-green-400 p-4 rounded-lg text-xs leading-relaxed whitespace-pre-wrap overflow-x-auto">{{ t.promptExample }}</pre>
-          </div>
+        <h3 class="font-semibold text-gray-800 mb-2 line-clamp-1">{{ t.title }}</h3>
+        <p class="text-sm text-gray-500 line-clamp-2 mb-4">{{ t.description }}</p>
+        <div class="flex flex-wrap gap-1.5">
+          <el-tag v-for="tag in t.tags.slice(0, 3)" :key="tag" size="small" type="info" effect="plain">{{ tag }}</el-tag>
         </div>
       </div>
     </div>
+
+    <!-- 教程详情弹窗 -->
+    <el-dialog v-model="dialogVisible" :title="selectedTutorial ? selectedTutorial.icon + ' ' + selectedTutorial.title : ''" width="90%" style="max-width: 640px">
+      <div v-if="selectedTutorial" class="space-y-4">
+        <!-- GitHub 项目说明 -->
+        <div>
+          <h4 class="font-semibold text-sm mb-2 flex items-center gap-2">🐙 GitHub 项目</h4>
+          <a :href="selectedTutorial.githubUrl" target="_blank" class="inline-flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition">
+            <span class="break-all">{{ selectedTutorial.githubUrl }}</span>
+            <span>↗</span>
+          </a>
+          <p class="text-sm text-gray-500 mt-2">{{ selectedTutorial.githubDesc }}</p>
+        </div>
+
+        <!-- 使用步骤 -->
+        <div>
+          <h4 class="font-semibold text-sm mb-2">📋 使用步骤</h4>
+          <ol class="space-y-1.5">
+            <li v-for="(step, i) in selectedTutorial.usageSteps" :key="i" class="text-sm text-gray-600 flex gap-2">
+              <span class="text-primary-500 font-bold flex-shrink-0">{{ i + 1 }}.</span>
+              <span>{{ step }}</span>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Prompt 示例 -->
+        <div>
+          <h4 class="font-semibold text-sm mb-2">💬 Prompt 示例</h4>
+          <pre class="bg-gray-900 text-green-400 p-4 rounded-lg text-xs leading-relaxed whitespace-pre-wrap overflow-x-auto">{{ selectedTutorial.promptExample }}</pre>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
