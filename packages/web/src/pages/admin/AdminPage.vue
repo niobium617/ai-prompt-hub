@@ -16,6 +16,13 @@ const articlePage = ref(1);
 const articleTotal = ref(0);
 const pageSize = 10;
 
+// 用户管理状态
+const users = ref<any[]>([]);
+const userTotal = ref(0);
+const userPage = ref(1);
+const userKeyword = ref('');
+let userDebounce: ReturnType<typeof setTimeout>;
+
 onMounted(fetchData);
 
 async function fetchData() {
@@ -38,9 +45,56 @@ async function fetchPublished() {
   articleTotal.value = articlesRes.total;
 }
 
+async function fetchUsers() {
+  const res = await api.get('/admin/users', {
+    page: userPage.value,
+    pageSize,
+    keyword: userKeyword.value || undefined,
+  });
+  users.value = res.items;
+  userTotal.value = res.total;
+}
+
+function onUserSearch() {
+  clearTimeout(userDebounce);
+  userDebounce = setTimeout(() => {
+    userPage.value = 1;
+    fetchUsers();
+  }, 300);
+}
+
+async function toggleUser(u: any) {
+  const action = u.status === 1 ? '禁用' : '启用';
+  try {
+    await ElMessageBox.confirm(`确认${action}用户「${u.nickname}」？`, action + '用户', { type: 'warning' });
+    await api.post(`/admin/users/${u.id}/status`, { status: u.status === 1 ? 0 : 1 });
+    ElMessage.success(`已${action}`);
+    fetchUsers();
+  } catch { /* cancelled */ }
+}
+
+async function changeRole(u: any) {
+  try {
+    const { value } = await ElMessageBox.prompt(
+      `修改「${u.nickname}」的角色。可选：user(普通用户) / expert(达人) / admin(管理员)`,
+      '修改角色',
+      {
+        type: 'info',
+        confirmButtonText: '确认修改',
+        inputValue: u.role,
+        inputValidator: (v: string) => ['user', 'expert', 'admin'].includes(v.trim()) || '角色只能是 user/expert/admin',
+      },
+    );
+    await api.post(`/admin/users/${u.id}/role`, { role: value.trim() });
+    ElMessage.success('角色已修改');
+    fetchUsers();
+  } catch { /* cancelled */ }
+}
+
 function onTabChange(tab: string) {
   activeTab.value = tab;
   if (tab === 'published') fetchPublished();
+  if (tab === 'users') fetchUsers();
 }
 
 async function approve(id: number) {
@@ -109,12 +163,15 @@ function removeArticle(id: number, title: string) {
     </div>
 
     <!-- 页签切换 -->
-    <div class="flex gap-2 mb-4">
+    <div class="flex gap-2 mb-4 flex-wrap">
       <el-button :type="activeTab === 'pending' ? 'primary' : 'default'" size="small" @click="onTabChange('pending')">
         待审核 ({{ pendingPrompts.length }})
       </el-button>
       <el-button :type="activeTab === 'published' ? 'primary' : 'default'" size="small" @click="onTabChange('published')">
         已发布内容
+      </el-button>
+      <el-button :type="activeTab === 'users' ? 'primary' : 'default'" size="small" @click="onTabChange('users')">
+        👥 用户管理
       </el-button>
     </div>
 
@@ -195,6 +252,62 @@ function removeArticle(id: number, title: string) {
             layout="prev, pager, next" background small @current-change="fetchPublished"
           />
         </div>
+      </div>
+    </div>
+
+    <!-- 用户管理 -->
+    <div v-if="activeTab === 'users'" class="bg-white rounded-xl p-6">
+      <h2 class="font-semibold mb-4">👥 用户管理（共 {{ userTotal }} 人）</h2>
+      <!-- 搜索 -->
+      <div class="mb-4 max-w-sm">
+        <el-input v-model="userKeyword" placeholder="搜索用户名/昵称/邮箱..." clearable @input="onUserSearch" />
+      </div>
+      <!-- 用户表格 -->
+      <el-table :data="users" stripe size="small">
+        <el-table-column prop="id" label="ID" width="60" />
+        <el-table-column label="用户" min-width="140">
+          <template #default="{ row }">
+            <div class="font-medium">{{ row.nickname }}</div>
+            <div class="text-xs text-gray-400">@{{ row.username }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="email" label="邮箱" min-width="170" show-overflow-tooltip />
+        <el-table-column label="角色" width="90">
+          <template #default="{ row }">
+            <el-tag size="small" :type="row.role === 'admin' ? 'danger' : row.role === 'expert' ? 'warning' : 'info'">
+              {{ row.role === 'admin' ? '管理员' : row.role === 'expert' ? '达人' : '用户' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="内容" width="90">
+          <template #default="{ row }">
+            <span class="text-xs text-gray-500">{{ row.promptCount }}词 / {{ row.articleCount }}文</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="70">
+          <template #default="{ row }">
+            <span :class="row.status === 1 ? 'text-green-600' : 'text-red-500'" class="text-xs">
+              {{ row.status === 1 ? '正常' : '禁用' }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150">
+          <template #default="{ row }">
+            <div class="flex gap-1.5">
+              <el-button size="small" :type="row.status === 1 ? 'warning' : 'success'" plain @click="toggleUser(row)">
+                {{ row.status === 1 ? '禁用' : '启用' }}
+              </el-button>
+              <el-button size="small" type="info" plain @click="changeRole(row)">角色</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <div v-if="userTotal > pageSize" class="flex justify-center mt-4">
+        <el-pagination
+          v-model:current-page="userPage" :page-size="pageSize" :total="userTotal"
+          layout="prev, pager, next" background small @current-change="fetchUsers"
+        />
       </div>
     </div>
   </div>

@@ -140,4 +140,76 @@ export class AdminService {
 
     return { success: true };
   }
+
+  /**
+   * 用户列表（支持搜索）
+   */
+  async getUsers(userRole: string, page = 1, pageSize = 10, keyword?: string) {
+    this.checkAdmin(userRole);
+    const p = Number(page) || 1;
+    const ps = Number(pageSize) || 10;
+    const where: any = {};
+    if (keyword) {
+      where.OR = [
+        { username: { contains: keyword } },
+        { nickname: { contains: keyword } },
+        { email: { contains: keyword } },
+      ];
+    }
+    const [items, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        skip: (p - 1) * ps,
+        take: ps,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true, username: true, nickname: true, email: true,
+          level: true, points: true, role: true, status: true, createdAt: true,
+          _count: { select: { prompts: true, articles: true } },
+        },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+    return {
+      items: items.map(u => ({
+        ...u,
+        id: Number(u.id),
+        promptCount: u._count.prompts,
+        articleCount: u._count.articles,
+        _count: undefined,
+      })),
+      total, page: p, pageSize: ps,
+    };
+  }
+
+  /**
+   * 禁用/启用用户
+   */
+  async toggleUserStatus(userId: number, userRole: string, status: number) {
+    this.checkAdmin(userRole);
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('用户不存在');
+    if (user.role === 'super_admin' && userRole !== 'super_admin') {
+      throw new ForbiddenException('无权操作超级管理员');
+    }
+    await this.prisma.user.update({ where: { id: userId }, data: { status } });
+    return { success: true };
+  }
+
+  /**
+   * 修改用户角色
+   */
+  async updateUserRole(userId: number, userRole: string, newRole: string) {
+    this.checkAdmin(userRole);
+    if (!['user', 'expert', 'admin'].includes(newRole)) {
+      throw new ForbiddenException('无效的角色');
+    }
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('用户不存在');
+    if (user.role === 'super_admin') {
+      throw new ForbiddenException('无权修改超级管理员');
+    }
+    await this.prisma.user.update({ where: { id: userId }, data: { role: newRole } });
+    return { success: true };
+  }
 }

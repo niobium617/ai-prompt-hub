@@ -57,4 +57,27 @@ export class AdminController {
   deleteArticle(@Param('id') id: string, @Request() req: any, @Body('reason') reason?: string) {
     return this.adminService.deleteArticle(+id, req.user.role, reason);
   }
+
+  @Get('users')
+  @ApiOperation({ summary: '用户列表（支持搜索）' })
+  getUsers(
+    @Request() req: any,
+    @Query('page') page?: number,
+    @Query('pageSize') pageSize?: number,
+    @Query('keyword') keyword?: string,
+  ) {
+    return this.adminService.getUsers(req.user.role, page, pageSize, keyword);
+  }
+
+  @Post('users/:id/status')
+  @ApiOperation({ summary: '禁用/启用用户' })
+  toggleUserStatus(@Param('id') id: string, @Request() req: any, @Body('status') status: number) {
+    return this.adminService.toggleUserStatus(+id, req.user.role, status);
+  }
+
+  @Post('users/:id/role')
+  @ApiOperation({ summary: '修改用户角色' })
+  updateUserRole(@Param('id') id: string, @Request() req: any, @Body('role') role: string) {
+    return this.adminService.updateUserRole(+id, req.user.role, role);
+  }
 }
