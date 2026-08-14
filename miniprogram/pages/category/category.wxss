@@ -16,3 +16,4 @@
 .tag-green { background: #f0fdf4; color: #22c55e; }
 .tag-orange { background: #fffbeb; color: #f59e0b; }
 .tag-red { background: #fef2f2; color: #ef4444; }
+.load-more { text-align: center; color: #bbb; font-size: 24rpx; padding: 20rpx 0; }

@@ -9,6 +9,13 @@ const publishedArticles = ref<any[]>([]);
 const stats = ref<any>({});
 const activeTab = ref('pending');
 
+// 分页状态
+const promptPage = ref(1);
+const promptTotal = ref(0);
+const articlePage = ref(1);
+const articleTotal = ref(0);
+const pageSize = 10;
+
 onMounted(fetchData);
 
 async function fetchData() {
@@ -22,11 +29,13 @@ async function fetchData() {
 
 async function fetchPublished() {
   const [promptsRes, articlesRes] = await Promise.all([
-    api.get('/admin/prompts/published'),
-    api.get('/admin/articles/published'),
+    api.get('/admin/prompts/published', { page: promptPage.value, pageSize }),
+    api.get('/admin/articles/published', { page: articlePage.value, pageSize }),
   ]);
   publishedPrompts.value = promptsRes.items;
+  promptTotal.value = promptsRes.total;
   publishedArticles.value = articlesRes.items;
+  articleTotal.value = articlesRes.total;
 }
 
 function onTabChange(tab: string) {
@@ -138,7 +147,7 @@ function removeArticle(id: number, title: string) {
     <div v-if="activeTab === 'published'" class="space-y-6">
       <!-- 已发布提示词 -->
       <div class="bg-white rounded-xl p-6">
-        <h2 class="font-semibold mb-4">📌 已发布提示词 ({{ publishedPrompts.length }})</h2>
+        <h2 class="font-semibold mb-4">📌 已发布提示词（共 {{ promptTotal }} 条）</h2>
         <div v-if="publishedPrompts.length === 0" class="text-center py-10 text-gray-400">暂无已发布提示词</div>
         <div v-else class="space-y-4">
           <div v-for="p in publishedPrompts" :key="p.id" class="border rounded-xl p-4 hover:bg-gray-50">
@@ -154,11 +163,17 @@ function removeArticle(id: number, title: string) {
             </div>
           </div>
         </div>
+        <div v-if="promptTotal > pageSize" class="flex justify-center mt-4">
+          <el-pagination
+            v-model:current-page="promptPage" :page-size="pageSize" :total="promptTotal"
+            layout="prev, pager, next" background small @current-change="fetchPublished"
+          />
+        </div>
       </div>
 
       <!-- 已发布文章 -->
       <div class="bg-white rounded-xl p-6">
-        <h2 class="font-semibold mb-4">📰 已发布文章 ({{ publishedArticles.length }})</h2>
+        <h2 class="font-semibold mb-4">📰 已发布文章（共 {{ articleTotal }} 条）</h2>
         <div v-if="publishedArticles.length === 0" class="text-center py-10 text-gray-400">暂无已发布文章</div>
         <div v-else class="space-y-4">
           <div v-for="a in publishedArticles" :key="a.id" class="border rounded-xl p-4 hover:bg-gray-50">
@@ -173,6 +188,12 @@ function removeArticle(id: number, title: string) {
               </div>
             </div>
           </div>
+        </div>
+        <div v-if="articleTotal > pageSize" class="flex justify-center mt-4">
+          <el-pagination
+            v-model:current-page="articlePage" :page-size="pageSize" :total="articleTotal"
+            layout="prev, pager, next" background small @current-change="fetchPublished"
+          />
         </div>
       </div>
     </div>

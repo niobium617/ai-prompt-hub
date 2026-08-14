@@ -7,6 +7,10 @@ Page({
     prompts: [] as any[],
     loading: false,
     error: '',
+    page: 1,
+    pageSize: 10,
+    total: 0,
+    hasMore: false,
   },
 
   onLoad() {
@@ -19,7 +23,7 @@ Page({
       const catList = Array.isArray(cats) ? cats : [];
       console.log('分类数据:', catList.length, '条');
       this.setData({ categories: catList });
-      this.fetchPrompts();
+      this.fetchPrompts(true);
     } catch (e: any) {
       console.error('分类加载失败:', e);
       this.setData({ error: '加载失败: ' + (e.errMsg || '网络错误') });
@@ -28,23 +32,50 @@ Page({
 
   onSelectCat(e: any) {
     const id = e.currentTarget.dataset.id;
-    this.setData({ selectedId: id });
-    this.fetchPrompts();
+    this.setData({ selectedId: id, page: 1 });
+    this.fetchPrompts(true);
   },
 
-  async fetchPrompts() {
-    this.setData({ loading: true, prompts: [] });
+  /**
+   * 加载提示词列表
+   * reset=true 时重置分页，否则追加加载
+   */
+  async fetchPrompts(reset = false) {
+    const page = reset ? 1 : this.data.page;
+    this.setData({ loading: true });
     try {
       let res: any;
       if (this.data.selectedId > 0) {
-        res = await this.request(`/categories/${this.data.selectedId}/prompts`, 'GET');
+        res = await this.request(`/categories/${this.data.selectedId}/prompts?page=${page}&pageSize=${this.data.pageSize}`, 'GET');
       } else {
-        res = await this.request('/prompts?pageSize=50', 'GET');
+        res = await this.request(`/prompts?page=${page}&pageSize=${this.data.pageSize}`, 'GET');
       }
-      this.setData({ prompts: res ? (res.items || []) : [], loading: false });
+      const items = res ? (res.items || []) : [];
+      const total = res ? (res.total || 0) : 0;
+      const prompts = reset ? items : this.data.prompts.concat(items);
+      this.setData({
+        prompts,
+        loading: false,
+        page,
+        total,
+        hasMore: prompts.length < total,
+      });
     } catch {
-      this.setData({ prompts: [], loading: false });
+      this.setData({ loading: false });
     }
+  },
+
+  /** 上拉加载更多 */
+  onReachBottom() {
+    if (this.data.hasMore && !this.data.loading) {
+      this.setData({ page: this.data.page + 1 });
+      this.fetchPrompts(false);
+    }
+  },
+
+  onPullDownRefresh() {
+    this.setData({ page: 1 });
+    this.fetchPrompts(true).then(() => wx.stopPullDownRefresh());
   },
 
   onTapPrompt(e: any) {

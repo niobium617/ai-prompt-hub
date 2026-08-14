@@ -36,6 +36,10 @@
         <view class="card-desc">{{item.description}}</view>
         <view class="card-foot">👁 {{item.viewCount}} · ⭐ {{item.ratingAvg}}</view>
       </view>
+      <!-- 加载更多状态 -->
+      <view wx:if="{{loading}}" class="load-more">加载中...</view>
+      <view wx:elif="{{hasMore}}" class="load-more">上拉加载更多</view>
+      <view wx:else class="load-more">共 {{total}} 条 · 已全部加载</view>
     </view>
   </view>
 </view>
