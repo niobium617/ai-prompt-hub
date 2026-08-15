@@ -85,7 +85,7 @@ Page({
 
   // 直接 wx.request 封装，避免模块导入问题
   request(url: string, method: string): Promise<any> {
-    const BASE = 'http://localhost:3000/api/v1';
+    const BASE = 'http://your-server-ip/api/v1';
     const token = wx.getStorageSync('accessToken') || '';
     return new Promise((resolve, reject) => {
       wx.request({
