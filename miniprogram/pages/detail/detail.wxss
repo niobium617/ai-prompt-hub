@@ -40,3 +40,18 @@
 .cmt-time { font-weight: 400; font-size: 22rpx; color: #ccc; margin-left: 12rpx; }
 .cmt-text { font-size: 28rpx; color: #555; }
 .cmt-like { font-size: 22rpx; color: #bbb; margin-top: 8rpx; }
+.btn-draft {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  line-height: 1;
+  background: #22c55e;
+  color: #fff;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  width: 100%;
+  margin-top: 16rpx;
+}
+.btn-draft::after { border: none; }
+.draft-tip { font-size: 22rpx; color: #bbb; margin-top: 12rpx; text-align: center; }

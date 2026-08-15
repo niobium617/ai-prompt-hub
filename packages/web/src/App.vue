@@ -69,6 +69,7 @@ watch(() => route.fullPath, fetchUnread);
                     <template v-if="!userStore.devMode || userStore.isDevTester">
                       <el-dropdown-item @click="router.push('/user/submit')">提交提示词</el-dropdown-item>
                       <el-dropdown-item @click="router.push('/article/new')">📝 发布文章</el-dropdown-item>
+                      <el-dropdown-item @click="router.push('/user/drafts')">🔒 我的草稿</el-dropdown-item>
                     </template>
                     <el-dropdown-item v-if="userStore.isAdmin" @click="router.push('/admin')">管理后台</el-dropdown-item>
                     <el-dropdown-item divided @click="userStore.logout(); router.push('/')">退出登录</el-dropdown-item>

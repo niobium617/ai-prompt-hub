@@ -19,6 +19,8 @@
       <button class="btn-primary" bindtap="onCopy">📋 一键复制</button>
       <button class="btn-outline" bindtap="onFav">{{isFav ? '❤️ 已收藏' : '🤍 收藏'}}</button>
     </view>
+    <button class="btn-draft" bindtap="onCreateDraft" loading="{{creatingDraft}}">✏️ 基于此创建草稿</button>
+    <view class="draft-tip">💡 草稿为私有副本，可自由修改，不影响公共原版</view>
   </view>
 
   <!-- 评分 -->

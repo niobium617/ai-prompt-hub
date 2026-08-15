@@ -39,6 +39,7 @@ Page({
   goLogin() { wx.navigateTo({ url: '/pages/login/login' }); },
   goFavorites() { wx.navigateTo({ url: '/pages/favorites/favorites' }); },
   goMyPrompts() { wx.navigateTo({ url: '/pages/myprompts/myprompts' }); },
+  goDrafts() { wx.navigateTo({ url: '/pages/drafts/drafts' }); },
   goNotifications() { wx.navigateTo({ url: '/pages/notifications/notifications' }); },
   goSubmit() { wx.navigateTo({ url: '/pages/submit/submit' }); },
   goTools() { wx.navigateTo({ url: '/pages/tools/tools' }); },

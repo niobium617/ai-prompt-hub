@@ -89,6 +89,18 @@ const router = createRouter({
       meta: { title: '提交提示词', requiresAuth: true },
     },
     {
+      path: '/user/drafts',
+      name: 'drafts',
+      component: () => import('../pages/draft/DraftsPage.vue'),
+      meta: { title: '我的草稿', requiresAuth: true },
+    },
+    {
+      path: '/drafts/:id',
+      name: 'draft-edit',
+      component: () => import('../pages/draft/DraftEditPage.vue'),
+      meta: { title: '编辑草稿', requiresAuth: true },
+    },
+    {
       path: '/admin',
       name: 'admin',
       component: () => import('../pages/admin/AdminPage.vue'),

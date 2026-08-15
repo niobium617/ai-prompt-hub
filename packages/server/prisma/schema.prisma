@@ -31,6 +31,7 @@ model User {
   ratings     Rating[]
   viewHistory ViewHistory[]
   notifications Notification[]
+  drafts      PromptDraft[]
 
   @@index([email])
   @@index([status])
@@ -231,4 +232,23 @@ model Notification {
   @@index([userId])
   @@index([userId, isRead])
   @@map("notifications")
+}
+
+model PromptDraft {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @map("user_id")
+  sourcePromptId Int      @map("source_prompt_id")
+  title          String
+  description    String
+  content        String
+  aiToolIds      String?  @map("ai_tool_ids")
+  difficulty     Int      @default(1)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([sourcePromptId])
+  @@map("prompt_drafts")
 }

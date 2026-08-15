@@ -8,6 +8,8 @@
     "pages/search/search",
     "pages/favorites/favorites",
     "pages/myprompts/myprompts",
+    "pages/drafts/drafts",
+    "pages/draftedit/draftedit",
     "pages/notifications/notifications",
     "pages/tools/tools",
     "pages/submit/submit",

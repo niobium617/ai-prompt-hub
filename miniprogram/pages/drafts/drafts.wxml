@@ -1,0 +1,16 @@
+<view class="page">
+  <view wx:if="{{!drafts.length && !loading}}" class="empty">
+    <text class="empty-icon">📝</text>
+    <text>暂无草稿</text>
+    <text class="empty-tip">在提示词详情页点「基于此创建草稿」即可开始</text>
+  </view>
+
+  <view wx:for="{{drafts}}" wx:key="id" class="card" bindtap="goEdit" data-id="{{item.id}}">
+    <view class="card-header">
+      <view class="card-title">{{item.title}}</view>
+      <text class="btn-edit">✏️</text>
+    </view>
+    <view class="card-desc">{{item.description}}</view>
+    <view class="card-foot">🔒 私有 · 更新于 {{item.updatedAt}}</view>
+  </view>
+</view>

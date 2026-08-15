@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import api from '@/api';
+import { useRoute, useRouter } from 'vue-router';
+import api, { extractError } from '@/api';
 import { useUserStore } from '@/stores/user';
 import { ElMessage } from 'element-plus';
 
 const route = useRoute();
+const router = useRouter();
 const userStore = useUserStore();
 const prompt = ref<any>(null);
 const comments = ref<any[]>([]);
@@ -50,6 +51,21 @@ async function onSubmitComment() {
   ElMessage.success('评论成功');
   fetchComments();
 }
+
+// 基于此创建草稿
+const creatingDraft = ref(false);
+async function onCreateDraft() {
+  if (!userStore.isLoggedIn) return ElMessage.warning('请先登录');
+  creatingDraft.value = true;
+  try {
+    const draft = await api.post('/drafts', { sourcePromptId: prompt.value.id });
+    ElMessage.success('草稿已创建');
+    router.push(`/drafts/${draft.id}`);
+  } catch (e: any) {
+    ElMessage.error(extractError(e));
+  }
+  creatingDraft.value = false;
+}
 </script>
 
 <template>
@@ -76,11 +92,17 @@ async function onSubmitComment() {
 
     <!-- Prompt 内容 -->
     <div class="bg-white rounded-xl p-6 mb-6">
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h2 class="font-semibold text-lg">📝 Prompt 内容</h2>
-        <el-button type="primary" @click="onCopy">📋 一键复制</el-button>
+        <div class="flex gap-2">
+          <el-button type="primary" @click="onCopy">📋 一键复制</el-button>
+          <el-button type="success" plain :loading="creatingDraft" @click="onCreateDraft">✏️ 基于此创建草稿</el-button>
+        </div>
       </div>
       <pre class="bg-gray-900 text-green-400 p-6 rounded-xl overflow-x-auto text-sm leading-relaxed whitespace-pre-wrap">{{ prompt.content }}</pre>
+      <div class="text-xs text-gray-400 mt-3">
+        💡 「基于此创建草稿」会复制一份到你的私有草稿，可自由修改，不会影响公共原版。
+      </div>
     </div>
 
     <!-- 评分 -->

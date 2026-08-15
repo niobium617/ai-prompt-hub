@@ -7,6 +7,7 @@ Page({
     commentText: '',
     isFav: false,
     userRating: 0,
+    creatingDraft: false,
   },
 
   onLoad(options: any) {
@@ -27,6 +28,23 @@ Page({
     wx.setClipboardData({ data: this.data.prompt.content });
     api.post(`/prompts/${this.data.prompt.id}/copy`);
     wx.showToast({ title: '已复制', icon: 'success' });
+  },
+
+  /** 基于此创建草稿 */
+  async onCreateDraft() {
+    if (!wx.getStorageSync('accessToken')) {
+      wx.showToast({ title: '请先登录', icon: 'none' }); return;
+    }
+    if (this.data.creatingDraft) return;
+    this.setData({ creatingDraft: true });
+    try {
+      const draft: any = await api.post('/drafts', { sourcePromptId: this.data.prompt.id });
+      wx.showToast({ title: '草稿已创建', icon: 'success' });
+      setTimeout(() => {
+        wx.navigateTo({ url: `/pages/draftedit/draftedit?id=${draft.id}` });
+      }, 600);
+    } catch { }
+    this.setData({ creatingDraft: false });
   },
 
   async onFav() {

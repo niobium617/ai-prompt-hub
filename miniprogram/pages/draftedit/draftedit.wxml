@@ -1,0 +1,28 @@
+<view class="page">
+  <!-- 版本切换 -->
+  <view class="tabs">
+    <view class="tab {{view==='draft' ? 'active' : ''}}" bindtap="switchView" data-view="draft">✏️ 我的草稿</view>
+    <view class="tab {{view==='source' ? 'active' : ''}}" bindtap="switchView" data-view="source">📄 原始版本</view>
+  </view>
+
+  <!-- 草稿编辑视图 -->
+  <view wx:if="{{view==='draft'}}" class="panel">
+    <view class="label">标题</view>
+    <input class="inp" value="{{title}}" bindinput="onTitleInput" maxlength="200" />
+    <view class="label">描述</view>
+    <textarea class="area" value="{{description}}" bindinput="onDescInput" maxlength="500" />
+    <view class="label">Prompt 内容</view>
+    <textarea class="area tall" value="{{content}}" bindinput="onContentInput" maxlength="10000" />
+    <button class="btn-save" bindtap="onSave" loading="{{saving}}">💾 保存草稿</button>
+    <button class="btn-delete" bindtap="onDelete">🗑 删除草稿</button>
+  </view>
+
+  <!-- 原始版本视图（只读） -->
+  <view wx:if="{{view==='source'}}" class="panel">
+    <view class="readonly-badge">原始版本 · 只读</view>
+    <view class="source-title">{{source ? source.title : ''}}</view>
+    <view class="source-desc">{{source ? source.description : ''}}</view>
+    <view class="code-block">{{source ? source.content : ''}}</view>
+    <view class="tip">💡 原始版本为公共数据，不可修改；请在「我的草稿」中自由编辑</view>
+  </view>
+</view>
