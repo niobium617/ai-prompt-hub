@@ -2,12 +2,23 @@
   <view class="card">
     <view class="logo">🚀 AI Prompt Hub</view>
 
-    <!-- 登录 -->
-    <view wx:if="{{mode==='login'}}">
+    <!-- 微信一键登录（默认） -->
+    <view wx:if="{{mode==='wechat'}}">
+      <button class="btn-wechat" bindtap="onWechatLogin" loading="{{loading}}">
+        微信一键登录
+      </button>
+      <view class="switch">首次登录需绑定邮箱</view>
+      <view class="divider">── 或 ──</view>
+      <button class="btn-outline" bindtap="switchMode" data-mode="password">邮箱密码登录</button>
+      <view class="switch" bindtap="switchMode" data-mode="register">没有账号？<text class="link">立即注册</text></view>
+    </view>
+
+    <!-- 邮箱密码登录 -->
+    <view wx:if="{{mode==='password'}}">
       <input class="inp" placeholder="邮箱或用户名" value="{{email}}" bindinput="onEmail" />
       <input class="inp" type="password" placeholder="密码" value="{{password}}" bindinput="onPwd" />
       <button class="btn" bindtap="onLogin" loading="{{loading}}">登录</button>
-      <view class="switch" bindtap="switchMode" data-mode="register">没有账号？<text class="link">立即注册</text></view>
+      <button class="btn-outline" bindtap="switchMode" data-mode="wechat">← 返回微信登录</button>
     </view>
 
     <!-- 注册 -->
@@ -16,7 +27,17 @@
       <input class="inp" placeholder="邮箱" value="{{regEmail}}" bindinput="onRegEmail" />
       <input class="inp" type="password" placeholder="密码（至少6位）" value="{{regPassword}}" bindinput="onRegPwd" />
       <button class="btn" bindtap="onRegister" loading="{{loading}}">注册</button>
-      <view class="switch" bindtap="switchMode" data-mode="login">已有账号？<text class="link">去登录</text></view>
+      <view class="switch" bindtap="switchMode" data-mode="wechat">已有账号？<text class="link">去登录</text></view>
+    </view>
+  </view>
+
+  <!-- 微信新用户绑定邮箱弹窗 -->
+  <view wx:if="{{showBindDialog}}" class="dialog-mask">
+    <view class="dialog">
+      <view class="dialog-title">绑定邮箱</view>
+      <view class="dialog-desc">首次使用微信登录，需要绑定邮箱（用于找回账号）</view>
+      <input class="inp" placeholder="输入邮箱" value="{{bindEmail}}" bindinput="onBindEmailInput" />
+      <button class="btn" bindtap="onBindEmail" loading="{{loading}}">确认绑定并登录</button>
     </view>
   </view>
 </view>

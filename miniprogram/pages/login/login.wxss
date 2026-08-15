@@ -5,3 +5,10 @@
 .btn { background: #3b82f6; color: #fff; border-radius: 12rpx; margin-top: 24rpx; font-size: 30rpx; }
 .switch { text-align: center; margin-top: 24rpx; font-size: 26rpx; color: #999; }
 .link { color: #3b82f6; }
+.btn-wechat { background: #07c160; color: #fff; border-radius: 12rpx; margin-top: 24rpx; font-size: 30rpx; }
+.btn-outline { background: #fff; color: #3b82f6; border: 2rpx solid #3b82f6; border-radius: 12rpx; margin-top: 16rpx; font-size: 28rpx; }
+.divider { text-align: center; color: #ccc; font-size: 24rpx; margin: 24rpx 0; }
+.dialog-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 999; }
+.dialog { background: #fff; border-radius: 20rpx; padding: 40rpx 32rpx; width: 560rpx; }
+.dialog-title { font-size: 32rpx; font-weight: bold; text-align: center; margin-bottom: 12rpx; }
+.dialog-desc { font-size: 24rpx; color: #999; text-align: center; margin-bottom: 24rpx; }

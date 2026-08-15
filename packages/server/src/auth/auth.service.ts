@@ -115,6 +115,83 @@ export class AuthService {
     return { success: true };
   }
 
+  /**
+   * 微信小程序登录
+   * 流程：code → openid → 已有用户直接登录；新用户返回 bindToken 要求绑定邮箱
+   */
+  async wechatLogin(code: string) {
+    const openid = await this.exchangeOpenid(code);
+
+    const user = await this.prisma.user.findUnique({ where: { wechatOpenid: openid } });
+    if (user) {
+      if (user.status === 0) throw new UnauthorizedException('账号已被禁用');
+      return { ...this.generateTokens(user.id, user.role), needBindEmail: false };
+    }
+
+    // 新用户：签发一次性绑定 token（5分钟有效）
+    const bindToken = this.jwtService.sign(
+      { openid, purpose: 'wechat-bind' },
+      { expiresIn: '5m' },
+    );
+    return { needBindEmail: true, bindToken };
+  }
+
+  /**
+   * 微信新用户绑定邮箱（完成注册）
+   */
+  async wechatBind(bindToken: string, email: string) {
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(bindToken);
+    } catch {
+      throw new UnauthorizedException('绑定凭证无效或已过期，请重新登录');
+    }
+    if (payload.purpose !== 'wechat-bind' || !payload.openid) {
+      throw new UnauthorizedException('绑定凭证无效');
+    }
+    // 邮箱已被占用？
+    const emailUser = await this.prisma.user.findUnique({ where: { email } });
+    if (emailUser) {
+      throw new UnauthorizedException('该邮箱已注册，请使用邮箱登录');
+    }
+    // openid 已被绑定？
+    const openidUser = await this.prisma.user.findUnique({ where: { wechatOpenid: payload.openid } });
+    if (openidUser) {
+      return { ...this.generateTokens(openidUser.id, openidUser.role), needBindEmail: false };
+    }
+
+    const username = 'wx_' + Math.random().toString(36).slice(2, 8);
+    const user = await this.prisma.user.create({
+      data: {
+        username,
+        email,
+        passwordHash: '',
+        nickname: email.split('@')[0],
+        wechatOpenid: payload.openid,
+      },
+    });
+    return { ...this.generateTokens(user.id, user.role), needBindEmail: false };
+  }
+
+  /**
+   * 用 code 换 openid（未配 AppSecret 时用开发模式模拟）
+   */
+  private async exchangeOpenid(code: string): Promise<string> {
+    const appId = process.env.WECHAT_APP_ID;
+    const secret = process.env.WECHAT_APP_SECRET;
+    if (!appId || !secret || secret === 'REMOVED-SECRET') {
+      // 开发模式：模拟 openid（不依赖微信服务器）
+      return 'dev_' + code.slice(0, 20);
+    }
+    const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${secret}&js_code=${code}&grant_type=authorization_code`;
+    const res = await fetch(url);
+    const data = await res.json() as any;
+    if (!data.openid) {
+      throw new UnauthorizedException('微信登录失败：' + (data.errmsg || '未知错误'));
+    }
+    return data.openid;
+  }
+
   private generateTokens(userId: number, role: string) {
     const payload = { sub: Number(userId), role };
     return {

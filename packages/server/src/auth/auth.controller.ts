@@ -51,6 +51,18 @@ export class AuthController {
     return this.authService.loginByCode(body.email);
   }
 
+  @Post('login/wechat')
+  @ApiOperation({ summary: '微信小程序登录（新用户需绑定邮箱）' })
+  wechatLogin(@Body() body: { code: string }) {
+    return this.authService.wechatLogin(body.code);
+  }
+
+  @Post('wechat/bind')
+  @ApiOperation({ summary: '微信新用户绑定邮箱' })
+  wechatBind(@Body() body: { bindToken: string; email: string }) {
+    return this.authService.wechatBind(body.bindToken, body.email);
+  }
+
   @Post('change-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
