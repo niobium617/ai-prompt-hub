@@ -96,6 +96,7 @@ async function onCreateDraft() {
         <h2 class="font-semibold text-lg">📝 Prompt 内容</h2>
         <div class="flex gap-2">
           <el-button type="primary" @click="onCopy">📋 一键复制</el-button>
+          <el-button @click="onFavorite">❤️ 收藏</el-button>
           <el-button type="success" plain :loading="creatingDraft" @click="onCreateDraft">✏️ 基于此创建草稿</el-button>
         </div>
       </div>
