@@ -11,6 +11,8 @@ Page({
     showBindDialog: false,
     bindEmail: '',
     bindToken: '',
+    needVerify: false,
+    verifyCode: '',
     loading: false,
   },
 
@@ -25,6 +27,7 @@ Page({
   onRegEmail(e: any) { this.setData({ regEmail: e.detail.value }); },
   onRegPwd(e: any) { this.setData({ regPassword: e.detail.value }); },
   onBindEmailInput(e: any) { this.setData({ bindEmail: e.detail.value }); },
+  onVerifyCodeInput(e: any) { this.setData({ verifyCode: e.detail.value }); },
 
   /** 微信一键登录 */
   async onWechatLogin() {
@@ -60,10 +63,47 @@ Page({
         bindToken: this.data.bindToken,
         email,
       });
-      this.setData({ showBindDialog: false });
-      this.saveLogin(res);
+      if (res.needVerify) {
+        // 邮箱已注册：需要验证码验证身份
+        this.setData({ needVerify: true, bindEmail: email });
+        if (res.devCode) {
+          // 开发模式：验证码未发邮件，直接展示
+          this.setData({ verifyCode: res.devCode });
+          wx.showModal({
+            title: '开发模式验证码',
+            content: '验证码: ' + res.devCode,
+            showCancel: false,
+          });
+        } else {
+          wx.showToast({ title: '验证码已发送到邮箱', icon: 'none' });
+        }
+      } else {
+        this.setData({ showBindDialog: false });
+        this.saveLogin(res);
+      }
     } catch (e: any) {
       wx.showToast({ title: e?.response?.data?.message || '绑定失败', icon: 'none' });
+    }
+    this.setData({ loading: false });
+  },
+
+  /** 已注册邮箱：输入验证码完成绑定 */
+  async onVerifyBind() {
+    if (!this.data.verifyCode) {
+      wx.showToast({ title: '请输入验证码', icon: 'none' });
+      return;
+    }
+    this.setData({ loading: true });
+    try {
+      const res: any = await api.post('/auth/wechat/bind', {
+        bindToken: this.data.bindToken,
+        email: this.data.bindEmail,
+        code: this.data.verifyCode,
+      });
+      this.setData({ showBindDialog: false, needVerify: false });
+      this.saveLogin(res);
+    } catch (e: any) {
+      wx.showToast({ title: e?.response?.data?.message || '验证失败', icon: 'none' });
     }
     this.setData({ loading: false });
   },

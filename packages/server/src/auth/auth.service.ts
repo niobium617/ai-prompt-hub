@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../common/prisma/prisma.service';
+import { MailService } from '../common/mail/mail.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private config: ConfigService,
+    private mailService: MailService,
   ) {}
 
   /** 开发模式白名单（测试账号） */
@@ -139,9 +141,11 @@ export class AuthService {
   }
 
   /**
-   * 微信新用户绑定邮箱（完成注册）
+   * 微信绑定邮箱
+   * - 邮箱未注册：直接创建新账号
+   * - 邮箱已注册：需验证码验证身份后绑定到已有账号
    */
-  async wechatBind(bindToken: string, email: string) {
+  async wechatBind(bindToken: string, email: string, code?: string) {
     let payload: any;
     try {
       payload = this.jwtService.verify(bindToken);
@@ -151,17 +155,33 @@ export class AuthService {
     if (payload.purpose !== 'wechat-bind' || !payload.openid) {
       throw new UnauthorizedException('绑定凭证无效');
     }
-    // 邮箱已被占用？
-    const emailUser = await this.prisma.user.findUnique({ where: { email } });
-    if (emailUser) {
-      throw new UnauthorizedException('该邮箱已注册，请使用邮箱登录');
-    }
-    // openid 已被绑定？
+
+    // openid 已被绑定过 → 直接登录
     const openidUser = await this.prisma.user.findUnique({ where: { wechatOpenid: payload.openid } });
     if (openidUser) {
       return { ...this.generateTokens(openidUser.id, openidUser.role), needBindEmail: false };
     }
 
+    // 邮箱已注册：验证身份后绑定
+    const emailUser = await this.prisma.user.findUnique({ where: { email } });
+    if (emailUser) {
+      if (!code) {
+        // 第一步：发验证码
+        const result = await this.mailService.sendCode(email, 'wechat-bind');
+        return { needVerify: true, ...result };
+      }
+      // 第二步：验证码校验后绑定
+      if (!this.mailService.verifyCode(email, code)) {
+        throw new UnauthorizedException('验证码错误或已过期');
+      }
+      await this.prisma.user.update({
+        where: { id: emailUser.id },
+        data: { wechatOpenid: payload.openid },
+      });
+      return { ...this.generateTokens(emailUser.id, emailUser.role), needBindEmail: false };
+    }
+
+    // 新邮箱：直接创建账号
     const username = 'wx_' + Math.random().toString(36).slice(2, 8);
     const user = await this.prisma.user.create({
       data: {

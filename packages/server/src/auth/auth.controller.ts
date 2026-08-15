@@ -58,9 +58,9 @@ export class AuthController {
   }
 
   @Post('wechat/bind')
-  @ApiOperation({ summary: '微信新用户绑定邮箱' })
-  wechatBind(@Body() body: { bindToken: string; email: string }) {
-    return this.authService.wechatBind(body.bindToken, body.email);
+  @ApiOperation({ summary: '微信绑定邮箱（已注册邮箱需验证码）' })
+  wechatBind(@Body() body: { bindToken: string; email: string; code?: string }) {
+    return this.authService.wechatBind(body.bindToken, body.email, body.code);
   }
 
   @Post('change-password')

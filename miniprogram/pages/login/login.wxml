@@ -36,8 +36,15 @@
     <view class="dialog">
       <view class="dialog-title">绑定邮箱</view>
       <view class="dialog-desc">首次使用微信登录，需要绑定邮箱（用于找回账号）</view>
-      <input class="inp" placeholder="输入邮箱" value="{{bindEmail}}" bindinput="onBindEmailInput" />
-      <button class="btn" bindtap="onBindEmail" loading="{{loading}}">确认绑定并登录</button>
+      <!-- 邮箱输入 -->
+      <input wx:if="{{!needVerify}}" class="inp" placeholder="输入邮箱" value="{{bindEmail}}" bindinput="onBindEmailInput" />
+      <!-- 已注册邮箱：验证码输入 -->
+      <view wx:if="{{needVerify}}" class="verify-box">
+        <view class="dialog-desc">该邮箱已注册，验证码已发送（开发模式直接弹窗显示）</view>
+        <input class="inp" placeholder="输入6位验证码" value="{{verifyCode}}" bindinput="onVerifyCodeInput" maxlength="6" />
+      </view>
+      <button wx:if="{{!needVerify}}" class="btn" bindtap="onBindEmail" loading="{{loading}}">确认绑定并登录</button>
+      <button wx:else class="btn" bindtap="onVerifyBind" loading="{{loading}}">验证并绑定</button>
     </view>
   </view>
 </view>

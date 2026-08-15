@@ -33,7 +33,7 @@ export class MailService {
   /**
    * 发送验证码邮件
    */
-  async sendCode(to: string, purpose: 'change-password' | 'register' | 'login'): Promise<{ devCode?: string }> {
+  async sendCode(to: string, purpose: 'change-password' | 'register' | 'login' | 'wechat-bind'): Promise<{ devCode?: string }> {
     // 检查发送频率（60秒内不允许重发）
     const existing = this.codeStore.get(to);
     if (existing && Date.now() - existing.expires < 4 * 60 * 1000) {
