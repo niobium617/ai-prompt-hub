@@ -24,6 +24,19 @@
       <view class="label">Prompt 内容 <text class="req">*</text></view>
       <textarea placeholder="粘贴完整的 Prompt 内容..." value="{{content}}" bindinput="onContent" maxlength="10000" style="min-height:240rpx" />
     </view>
+    <view class="form-item">
+      <view class="label">效果示例图 <text class="opt">(可选)</text></view>
+      <view class="img-grid">
+        <view wx:for="{{exampleImages}}" wx:key="*this" class="img-item">
+          <image src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewImage" />
+          <view class="img-remove" data-index="{{index}}" catchtap="removeImage">×</view>
+        </view>
+        <view class="img-add" bindtap="onChooseImage">
+          <text class="add-icon">{{uploading ? '...' : '＋'}}</text>
+          <text class="add-text">添加图片</text>
+        </view>
+      </view>
+    </view>
     <button class="btn" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">📤 提交审核</button>
   </view>
 </view>

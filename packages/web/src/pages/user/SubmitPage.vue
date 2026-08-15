@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import api from '@/api';
+import api, { extractError } from '@/api';
 import { ElMessage } from 'element-plus';
 
 const router = useRouter();
@@ -13,6 +13,8 @@ const categoryId = ref<number | undefined>();
 const difficulty = ref(1);
 const aiToolIds = ref<number[]>([]);
 const aiTools = ref<any[]>([]);
+const exampleImages = ref<string[]>([]);
+const uploadingImg = ref(false);
 
 onMounted(async () => {
   const [catRes, toolRes] = await Promise.all([
@@ -27,6 +29,30 @@ function flattenCats(cats: any[]): any[] {
   return cats.flatMap(c => [c, ...(c.children || [])]);
 }
 
+/** 上传效果示例图 */
+async function onUploadImage(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { ElMessage.warning('图片不超过 5MB'); return; }
+  uploadingImg.value = true;
+  try {
+    const form = new FormData();
+    form.append('file', file);
+    const res: any = await api.post('/upload/image', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    exampleImages.value.push(res.url);
+    ElMessage.success('图片已添加');
+  } catch (e: any) {
+    ElMessage.error(extractError(e));
+  }
+  uploadingImg.value = false;
+}
+
+function removeImage(i: number) {
+  exampleImages.value.splice(i, 1);
+}
+
 async function onSubmit() {
   if (!title.value || !content.value || !categoryId.value) {
     return ElMessage.warning('请填写标题、内容和分类');
@@ -38,6 +64,7 @@ async function onSubmit() {
     categoryId: categoryId.value,
     difficulty: difficulty.value,
     aiToolIds: aiToolIds.value,
+    exampleImages: exampleImages.value,
   });
   ElMessage.success('提交成功，等待审核');
   router.push('/user');
@@ -74,6 +101,26 @@ async function onSubmit() {
         </el-form-item>
         <el-form-item label="Prompt内容" required>
           <el-input v-model="content" type="textarea" :rows="12" placeholder="粘贴完整的 Prompt 内容..." />
+        </el-form-item>
+        <el-form-item label="效果示例">
+          <div class="w-full">
+            <div class="flex flex-wrap gap-3 mb-3">
+              <div v-for="(img, i) in exampleImages" :key="img" class="relative">
+                <img :src="img" class="w-24 h-24 object-cover rounded-lg border" />
+                <button
+                  type="button"
+                  class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-600"
+                  @click="removeImage(i)"
+                >×</button>
+              </div>
+              <label class="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary-400 transition">
+                <span class="text-2xl text-gray-400">{{ uploadingImg ? '...' : '＋' }}</span>
+                <span class="text-xs text-gray-400 mt-1">添加图片</span>
+                <input type="file" accept="image/*" class="hidden" @change="onUploadImage" />
+              </label>
+            </div>
+            <div class="text-xs text-gray-400">可选：上传效果示例图（最多不限，单张 ≤5MB）</div>
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" size="large" @click="onSubmit">提交审核</el-button>
