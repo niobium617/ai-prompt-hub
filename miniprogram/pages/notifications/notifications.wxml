@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="topbar">
+    <text>共 {{items.length}} 条通知</text>
+    <text wx:if="{{unread > 0}}" class="mark-all" bindtap="markAll">全部已读</text>
+  </view>
+
+  <view wx:if="{{!items.length && !loading}}" class="empty">
+    <text class="empty-icon">📭</text>
+    <text>暂无通知</text>
+  </view>
+
+  <view wx:else>
+    <view wx:for="{{items}}" wx:key="id" class="card {{item.isRead ? '' : 'unread'}}">
+      <view class="card-title">
+        {{item.type === 'delete' ? '🗑️' : item.type === 'system' ? '📢' : '💬'}} {{item.title}}
+        <text wx:if="{{!item.isRead}}" class="dot"></text>
+      </view>
+      <view class="card-content">{{item.content}}</view>
+      <view class="card-time">{{item.createdAt}}</view>
+    </view>
+  </view>
+</view>

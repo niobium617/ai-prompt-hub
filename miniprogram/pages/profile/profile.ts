@@ -1,10 +1,10 @@
-const app = getApp<IAppOption>();
+import { api } from '../../utils/request';
 
 Page({
   data: {
     isLogin: false,
     userInfo: null as any,
-    stats: { prompts: 0, favorites: 0 } as any,
+    stats: { prompts: 0, favorites: 0, unread: 0 } as any,
   },
 
   onShow() {
@@ -19,16 +19,18 @@ Page({
 
   async loadProfile() {
     try {
-      const { api } = require('../../utils/request');
-      const [profile, favRes] = await Promise.all([
+      const [profile, favRes, promptRes, notifRes] = await Promise.all([
         api.get('/user/profile'),
         api.get('/user/favorites'),
+        api.get('/user/prompts', { page: 1, pageSize: 1 }),
+        api.get('/user/notifications', { page: 1, pageSize: 1 }),
       ]);
       this.setData({
         userInfo: profile as any,
         stats: {
-          prompts: (profile as any)?.points || 0,
+          prompts: (promptRes as any)?.total || 0,
           favorites: (favRes as any)?.total || 0,
+          unread: (notifRes as any)?.unreadCount || 0,
         },
       });
     } catch { /* not logged in */ }
@@ -36,6 +38,8 @@ Page({
 
   goLogin() { wx.navigateTo({ url: '/pages/login/login' }); },
   goFavorites() { wx.navigateTo({ url: '/pages/favorites/favorites' }); },
+  goMyPrompts() { wx.navigateTo({ url: '/pages/myprompts/myprompts' }); },
+  goNotifications() { wx.navigateTo({ url: '/pages/notifications/notifications' }); },
   goSubmit() { wx.navigateTo({ url: '/pages/submit/submit' }); },
   goTools() { wx.navigateTo({ url: '/pages/tools/tools' }); },
 

@@ -1,0 +1,31 @@
+<view class="page">
+  <view class="header">共 {{total}} 条投稿</view>
+
+  <view wx:if="{{loading && !prompts.length}}" class="empty">加载中...</view>
+
+  <view wx:elif="{{!prompts.length}}" class="empty">
+    <text class="empty-icon">📭</text>
+    <text>暂无投稿</text>
+    <button class="btn-go" bindtap="goSubmit">去提交第一个提示词</button>
+  </view>
+
+  <view wx:else>
+    <view wx:for="{{prompts}}" wx:key="id" class="card">
+      <view class="card-header" bindtap="onTapPrompt" data-id="{{item.id}}">
+        <view class="card-title">{{item.title}}</view>
+        <view class="tag tag-{{item.difficulty === 1 ? 'green' : item.difficulty === 2 ? 'orange' : 'red'}}">
+          {{item.difficulty === 1 ? '入门' : item.difficulty === 2 ? '进阶' : '高级'}}
+        </view>
+      </view>
+      <view class="card-desc">{{item.description}}</view>
+      <view class="card-foot">
+        <text class="foot-left">📁 {{item.category ? item.category.name : ''}} · 👁 {{item.viewCount}}</text>
+        <text class="btn-delete" bindtap="onDelete" data-id="{{item.id}}" data-title="{{item.title}}">🗑 删除</text>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="load-more">加载中...</view>
+    <view wx:elif="{{hasMore}}" class="load-more">上拉加载更多</view>
+    <view wx:else class="load-more">已全部加载</view>
+  </view>
+</view>

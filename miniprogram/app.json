@@ -7,6 +7,8 @@
     "pages/detail/detail",
     "pages/search/search",
     "pages/favorites/favorites",
+    "pages/myprompts/myprompts",
+    "pages/notifications/notifications",
     "pages/tools/tools",
     "pages/submit/submit",
     "pages/login/login"
