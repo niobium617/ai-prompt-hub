@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api, { extractError } from '@/api';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 const drafts = ref<any[]>([]);
@@ -28,15 +28,8 @@ function goEdit(d: any) {
 }
 
 async function onDelete(d: any) {
-  try {
-    await ElMessageBox.confirm(`确认删除《${d.title}》？删除后不可恢复`, '删除草稿', {
-      type: 'warning',
-      confirmButtonText: '删除',
-      confirmButtonClass: 'el-button--danger',
-    });
-  } catch {
-    return;
-  }
+  // 原生确认框，避免组件库弹窗在懒加载页面失效
+  if (!window.confirm(`确认删除《${d.title}》？删除后不可恢复`)) return;
   try {
     await api.delete(`/drafts/${d.id}`);
     ElMessage.success('已删除');

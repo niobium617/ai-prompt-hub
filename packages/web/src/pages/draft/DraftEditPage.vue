@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api, { extractError } from '@/api';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage } from 'element-plus';
 
 const route = useRoute();
 const router = useRouter();
@@ -55,15 +55,8 @@ async function onSave() {
 }
 
 async function onDelete() {
-  try {
-    await ElMessageBox.confirm('确认删除该草稿？删除后不可恢复', '删除草稿', {
-      type: 'warning',
-      confirmButtonText: '删除',
-      confirmButtonClass: 'el-button--danger',
-    });
-  } catch {
-    return;
-  }
+  // 原生确认框
+  if (!window.confirm('确认删除该草稿？删除后不可恢复')) return;
   try {
     await api.delete(`/drafts/${draftId.value}`);
     ElMessage.success('已删除');
