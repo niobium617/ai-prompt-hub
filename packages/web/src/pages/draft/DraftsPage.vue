@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api, { extractError } from '@/api';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 const router = useRouter();
 const drafts = ref<any[]>([]);
@@ -25,6 +25,25 @@ onMounted(fetchList);
 
 function goEdit(d: any) {
   router.push(`/drafts/${d.id}`);
+}
+
+async function onDelete(d: any) {
+  try {
+    await ElMessageBox.confirm(`确认删除《${d.title}》？删除后不可恢复`, '删除草稿', {
+      type: 'warning',
+      confirmButtonText: '删除',
+      confirmButtonClass: 'el-button--danger',
+    });
+  } catch {
+    return;
+  }
+  try {
+    await api.delete(`/drafts/${d.id}`);
+    ElMessage.success('已删除');
+    fetchList();
+  } catch (e: any) {
+    ElMessage.error(extractError(e));
+  }
 }
 </script>
 
@@ -52,7 +71,10 @@ function goEdit(d: any) {
               <h3 class="font-semibold text-gray-800 truncate">{{ d.title }}</h3>
               <p class="text-sm text-gray-500 line-clamp-2 mt-1">{{ d.description }}</p>
             </div>
-            <el-button size="small" type="primary" plain>✏️ 编辑</el-button>
+            <div class="flex gap-1.5 flex-shrink-0" @click.stop>
+              <el-button size="small" type="primary" plain @click="goEdit(d)">✏️ 编辑</el-button>
+              <el-button size="small" type="danger" plain @click="onDelete(d)">🗑 删除</el-button>
+            </div>
           </div>
           <div class="text-xs text-gray-400 mt-2">
             🔒 私有 · 更新于 {{ d.updatedAt?.slice(0, 16).replace('T', ' ') }}

@@ -8,9 +8,14 @@
   <view wx:for="{{drafts}}" wx:key="id" class="card" bindtap="goEdit" data-id="{{item.id}}">
     <view class="card-header">
       <view class="card-title">{{item.title}}</view>
-      <text class="btn-edit">✏️</text>
     </view>
     <view class="card-desc">{{item.description}}</view>
-    <view class="card-foot">🔒 私有 · 更新于 {{item.updatedAt}}</view>
+    <view class="card-foot">
+      <text>🔒 私有 · 更新于 {{item.updatedAt}}</text>
+      <view class="card-actions">
+        <text class="btn-edit" catchtap="goEdit" data-id="{{item.id}}">✏️</text>
+        <text class="btn-del" catchtap="onDelete" data-id="{{item.id}}" data-title="{{item.title}}">🗑</text>
+      </view>
+    </view>
   </view>
 </view>
