@@ -25,7 +25,11 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '../../.env'] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      // 兼容两种启动方式：本地(packages/server cwd) 与 ECS(仓库根 cwd)
+      envFilePath: ['.env', 'packages/server/.env', '../../.env'],
+    }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),

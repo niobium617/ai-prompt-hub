@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
@@ -9,6 +10,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private config: ConfigService,
   ) {}
 
   /** 开发模式白名单（测试账号） */
@@ -177,8 +179,8 @@ export class AuthService {
    * 用 code 换 openid（未配 AppSecret 时用开发模式模拟）
    */
   private async exchangeOpenid(code: string): Promise<string> {
-    const appId = process.env.WECHAT_APP_ID;
-    const secret = process.env.WECHAT_APP_SECRET;
+    const appId = this.config.get('WECHAT_APP_ID');
+    const secret = this.config.get('WECHAT_APP_SECRET');
     if (!appId || !secret || secret === 'REMOVED-SECRET') {
       // 开发模式：模拟 openid（不依赖微信服务器）
       return 'dev_' + code.slice(0, 20);
