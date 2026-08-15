@@ -55,16 +55,31 @@ function request<T = any>(options: RequestOptions): Promise<T> {
           }
           return;
         }
-        // 其他错误
-        wx.showToast({ title: (res.data as any)?.message || '请求失败', icon: 'none' });
+        // 其他错误：统一提取后端错误信息
+        wx.showToast({ title: extractError(res.data), icon: 'none' });
         reject(res.data);
       },
-      fail(err) {
-        wx.showToast({ title: '网络错误', icon: 'none' });
+      fail(err: any) {
+        // 网络错误分类提示
+        let msg = '网络异常，请检查网络';
+        if (err.errMsg && err.errMsg.includes('timeout')) msg = '请求超时，请重试';
+        wx.showToast({ title: msg, icon: 'none' });
         reject(err);
       },
     });
   });
+}
+
+/**
+ * 统一提取后端错误信息（兼容字符串/数组/对象格式）
+ */
+function extractError(data: any): string {
+  if (!data) return '请求失败，请稍后再试';
+  const msg = data.message;
+  if (Array.isArray(msg)) return msg.join('；');
+  if (typeof msg === 'string' && msg) return msg;
+  if (typeof data === 'string' && data) return data;
+  return '请求失败，请稍后再试';
 }
 
 export const api = {

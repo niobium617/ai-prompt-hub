@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { ElMessage } from 'element-plus';
-import api from '@/api';
+import api, { extractError } from '@/api';
 
 const router = useRouter();
 const userStore = useUserStore();

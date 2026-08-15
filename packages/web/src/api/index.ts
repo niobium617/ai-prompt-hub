@@ -35,6 +35,33 @@ client.interceptors.response.use(
   },
 );
 
+/**
+ * 提取后端错误信息（兼容字符串/数组格式）
+ */
+export function extractError(error: any): string {
+  const data = error?.response?.data;
+  const msg = data?.message;
+  if (Array.isArray(msg)) return msg.join('；');
+  if (typeof msg === 'string' && msg) return msg;
+  // 网络错误
+  if (!error.response) {
+    if (error.code === 'ECONNABORTED') return '请求超时，请稍后再试';
+    return '网络异常，请检查网络连接';
+  }
+  // HTTP 状态码兜底
+  const statusMap: Record<number, string> = {
+    400: '请求参数有误',
+    401: '登录已过期，请重新登录',
+    403: '没有操作权限',
+    404: '请求的资源不存在',
+    429: '操作过于频繁，请稍后再试',
+    500: '服务器开小差了，请稍后再试',
+    502: '服务暂时不可用',
+    503: '服务维护中',
+  };
+  return statusMap[error.response.status] || '请求失败，请稍后再试';
+}
+
 // 类型安全的包装：返回后端数据（any），避免 AxiosResponse 类型干扰
 const api = {
   get: <T = any>(url: string, params?: any): Promise<T> =>

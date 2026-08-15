@@ -2,7 +2,7 @@
 .search-bar { padding: 16rpx 24rpx; background: #fff; }
 .search-box { display: flex; align-items: center; background: #f5f7fa; border-radius: 40rpx; padding: 14rpx 24rpx; }
 .search-icon { margin-right: 12rpx; font-size: 30rpx; }
-.search-input { flex: 1; font-size: 28rpx; }
+.search-input { flex: 1; font-size: 28rpx; height: 60rpx; line-height: 60rpx; }
 
 .banner { margin: 16rpx 24rpx; background: linear-gradient(135deg, #3b82f6, #6366f1); border-radius: 24rpx; padding: 48rpx 32rpx; color: #fff; }
 .banner-title { font-size: 36rpx; font-weight: bold; margin-bottom: 12rpx; }

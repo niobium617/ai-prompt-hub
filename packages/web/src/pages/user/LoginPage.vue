@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { ElMessage } from 'element-plus';
-import api from '@/api';
+import api, { extractError } from '@/api';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -34,17 +34,9 @@ async function onSendCode() {
       if (codeCountdown.value <= 0 && codeTimer) { clearInterval(codeTimer); codeTimer = null; }
     }, 1000);
   } catch (e: any) {
-    ElMessage.error(e.response?.data?.message || '发送失败');
+    ElMessage.error(extractError(e));
   }
   codeLoading.value = false;
-}
-
-// 提取后端错误信息（兼容多种返回格式）
-function extractError(e: any): string {
-  const msg = e?.response?.data?.message;
-  if (Array.isArray(msg)) return msg.join('；');
-  if (typeof msg === 'string') return msg;
-  return '请求失败，请稍后再试';
 }
 
 const loginError = ref('');
@@ -76,7 +68,7 @@ async function onCodeLogin() {
     ElMessage.success('登录成功');
     router.push('/');
   } catch (e: any) {
-    ElMessage.error(e.response?.data?.message || '登录失败');
+    ElMessage.error(extractError(e));
   }
   loading.value = false;
 }

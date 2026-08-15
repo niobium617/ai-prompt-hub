@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useUserStore } from '@/stores/user';
-import api from '@/api';
+import api, { extractError } from '@/api';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import PromptCard from '@/components/PromptCard.vue';
 
@@ -56,7 +56,7 @@ async function onSendCode() {
       if (codeCountdown.value <= 0 && codeTimer) { clearInterval(codeTimer); codeTimer = null; }
     }, 1000);
   } catch (e: any) {
-    ElMessage.error(e.response?.data?.message || '发送失败');
+    ElMessage.error(extractError(e));
   }
   codeLoading.value = false;
 }
@@ -77,7 +77,7 @@ async function onDeletePrompt(p: any) {
     const res = await api.get('/user/prompts', { page: 1, pageSize: 10 });
     myPrompts.value = res.items;
   } catch (e: any) {
-    ElMessage.error(e.response?.data?.message || '删除失败');
+    ElMessage.error(extractError(e));
   }
 }
 
@@ -97,7 +97,7 @@ async function onChangePassword() {
     pwdDialogVisible.value = false;
     newPassword.value = ''; confirmPassword.value = ''; verifyCode.value = '';
   } catch (e: any) {
-    ElMessage.error(e.response?.data?.message || '修改失败');
+    ElMessage.error(extractError(e));
   }
   pwdLoading.value = false;
 }
