@@ -7,10 +7,26 @@ export class DraftService {
 
   /**
    * 基于公共提示词创建私有草稿（复制原文，不改动公共数据）
+   * 同一用户对同一来源重复创建时，返回已有草稿（幂等）
    */
   async createFromPrompt(userId: number, sourcePromptId: number) {
     const source = await this.prisma.prompt.findUnique({ where: { id: sourcePromptId } });
     if (!source) throw new NotFoundException('来源提示词不存在');
+
+    // 已有基于该来源的草稿 → 直接返回，不重复创建
+    const existing = await this.prisma.promptDraft.findFirst({
+      where: { userId, sourcePromptId },
+      orderBy: { updatedAt: 'desc' },
+    });
+    if (existing) {
+      return {
+        ...existing,
+        id: Number(existing.id),
+        userId: Number(existing.userId),
+        sourcePromptId: Number(existing.sourcePromptId),
+        reused: true,
+      };
+    }
 
     const draft = await this.prisma.promptDraft.create({
       data: {
@@ -23,7 +39,7 @@ export class DraftService {
         difficulty: source.difficulty,
       },
     });
-    return { ...draft, id: Number(draft.id), userId: Number(draft.userId), sourcePromptId: Number(draft.sourcePromptId) };
+    return { ...draft, id: Number(draft.id), userId: Number(draft.userId), sourcePromptId: Number(draft.sourcePromptId), reused: false };
   }
 
   /**

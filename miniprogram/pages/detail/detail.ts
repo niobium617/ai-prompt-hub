@@ -39,7 +39,7 @@ Page({
     this.setData({ creatingDraft: true });
     try {
       const draft: any = await api.post('/drafts', { sourcePromptId: this.data.prompt.id });
-      wx.showToast({ title: '草稿已创建', icon: 'success' });
+      wx.showToast({ title: draft.reused ? '已打开现有草稿' : '草稿已创建', icon: 'success' });
       setTimeout(() => {
         wx.navigateTo({ url: `/pages/draftedit/draftedit?id=${draft.id}` });
       }, 600);

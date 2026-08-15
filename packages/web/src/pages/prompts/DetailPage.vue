@@ -59,7 +59,7 @@ async function onCreateDraft() {
   creatingDraft.value = true;
   try {
     const draft = await api.post('/drafts', { sourcePromptId: prompt.value.id });
-    ElMessage.success('草稿已创建');
+    ElMessage.success(draft.reused ? '已打开现有草稿' : '草稿已创建');
     router.push(`/drafts/${draft.id}`);
   } catch (e: any) {
     ElMessage.error(extractError(e));
