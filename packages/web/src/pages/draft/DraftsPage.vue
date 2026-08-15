@@ -3,11 +3,13 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api, { extractError } from '@/api';
 import { ElMessage } from 'element-plus';
+import ConfirmDialog from '@/components/ConfirmDialog.vue';
 
 const router = useRouter();
 const drafts = ref<any[]>([]);
 const total = ref(0);
 const loading = ref(false);
+const deleteTarget = ref<any>(null);
 
 async function fetchList() {
   loading.value = true;
@@ -27,9 +29,14 @@ function goEdit(d: any) {
   router.push(`/drafts/${d.id}`);
 }
 
-async function onDelete(d: any) {
-  // 原生确认框，避免组件库弹窗在懒加载页面失效
-  if (!window.confirm(`确认删除《${d.title}》？删除后不可恢复`)) return;
+function onDelete(d: any) {
+  deleteTarget.value = d;
+}
+
+async function doDelete() {
+  const d = deleteTarget.value;
+  deleteTarget.value = null;
+  if (!d) return;
   try {
     await api.delete(`/drafts/${d.id}`);
     ElMessage.success('已删除');
@@ -75,5 +82,16 @@ async function onDelete(d: any) {
         </div>
       </div>
     </div>
+
+    <!-- 删除确认弹窗 -->
+    <ConfirmDialog
+      :visible="!!deleteTarget"
+      title="删除草稿"
+      :message="deleteTarget ? `确认删除《${deleteTarget.title}》？删除后不可恢复` : ''"
+      danger
+      confirm-text="确认删除"
+      @confirm="doDelete"
+      @cancel="deleteTarget = null"
+    />
   </div>
 </template>

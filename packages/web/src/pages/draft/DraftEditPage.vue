@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api, { extractError } from '@/api';
 import { ElMessage } from 'element-plus';
+import ConfirmDialog from '@/components/ConfirmDialog.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -54,9 +55,14 @@ async function onSave() {
   saving.value = false;
 }
 
+const deleteVisible = ref(false);
+
 async function onDelete() {
-  // 原生确认框
-  if (!window.confirm('确认删除该草稿？删除后不可恢复')) return;
+  deleteVisible.value = true;
+}
+
+async function doDelete() {
+  deleteVisible.value = false;
   try {
     await api.delete(`/drafts/${draftId.value}`);
     ElMessage.success('已删除');
@@ -160,5 +166,16 @@ const showDraft = computed(() => viewMode.value === 'draft' || viewMode.value ==
         </div>
       </div>
     </div>
+
+    <!-- 删除确认弹窗 -->
+    <ConfirmDialog
+      :visible="deleteVisible"
+      title="删除草稿"
+      message="确认删除该草稿？删除后不可恢复"
+      danger
+      confirm-text="确认删除"
+      @confirm="doDelete"
+      @cancel="deleteVisible = false"
+    />
   </div>
 </template>
