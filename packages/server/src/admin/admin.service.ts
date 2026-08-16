@@ -1,4 +1,5 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { NotificationService } from '../notification/notification.service';
 
@@ -185,8 +186,14 @@ export class AdminService {
   /**
    * 禁用/启用用户
    */
-  async toggleUserStatus(userId: number, userRole: string, status: number) {
+  async toggleUserStatus(userId: number, userRole: string, status: number, operatorId: number) {
     this.checkAdmin(userRole);
+    if (![0, 1].includes(status)) {
+      throw new ForbiddenException('无效的状态');
+    }
+    if (userId === operatorId) {
+      throw new ForbiddenException('不能修改自己的状态');
+    }
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('用户不存在');
     if (user.role === 'super_admin' && userRole !== 'super_admin') {
@@ -197,12 +204,15 @@ export class AdminService {
   }
 
   /**
-   * 修改用户角色
+   * 修改用户角色（仅超级管理员可授予 admin 角色）
    */
   async updateUserRole(userId: number, userRole: string, newRole: string) {
     this.checkAdmin(userRole);
     if (!['user', 'expert', 'admin'].includes(newRole)) {
       throw new ForbiddenException('无效的角色');
+    }
+    if (newRole === 'admin' && userRole !== 'super_admin') {
+      throw new ForbiddenException('仅超级管理员可授予管理员角色');
     }
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('用户不存在');
@@ -210,6 +220,21 @@ export class AdminService {
       throw new ForbiddenException('无权修改超级管理员');
     }
     await this.prisma.user.update({ where: { id: userId }, data: { role: newRole } });
+    return { success: true };
+  }
+
+  /**
+   * 管理员重置用户密码
+   */
+  async resetUserPassword(userId: number, userRole: string, newPassword: string) {
+    this.checkAdmin(userRole);
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('用户不存在');
+    if (user.role === 'super_admin' && userRole !== 'super_admin') {
+      throw new ForbiddenException('无权操作超级管理员');
+    }
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
     return { success: true };
   }
 }

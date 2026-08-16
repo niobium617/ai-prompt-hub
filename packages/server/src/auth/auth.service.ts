@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
@@ -110,10 +110,10 @@ export class AuthService {
     return this.generateTokens(user.id, user.role);
   }
 
-  async changePassword(userId: number, newPassword: string) {
+  async changePassword(userId: number, email: string, newPassword: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      throw new UnauthorizedException('用户不存在');
+    if (!user || user.email !== email) {
+      throw new ForbiddenException('邮箱与当前账号不匹配');
     }
     const passwordHash = await bcrypt.hash(newPassword, 12);
     await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
@@ -147,6 +147,8 @@ export class AuthService {
    * - 邮箱已注册：需验证码验证身份后绑定到已有账号
    */
   async wechatBind(bindToken: string, email: string, code?: string) {
+    // 开发模式：仅白名单邮箱可绑定/创建（与登录一致）
+    this.checkDevMode(email);
     let payload: any;
     try {
       payload = this.jwtService.verify(bindToken);
@@ -171,8 +173,8 @@ export class AuthService {
         const result = await this.mailService.sendCode(email, 'wechat-bind');
         return { needVerify: true, ...result };
       }
-      // 第二步：验证码校验后绑定
-      if (!this.mailService.verifyCode(email, code)) {
+      // 第二步：验证码校验后绑定（用途绑定）
+      if (!this.mailService.verifyCode(email, code, 'wechat-bind')) {
         throw new UnauthorizedException('验证码错误或已过期');
       }
       await this.prisma.user.update({
@@ -203,8 +205,11 @@ export class AuthService {
     const appId = this.config.get('WECHAT_APP_ID');
     const secret = this.config.get('WECHAT_APP_SECRET');
     if (!appId || !secret || secret === 'REMOVED-SECRET') {
-      // 开发模式：模拟 openid（不依赖微信服务器）
-      return 'dev_' + code.slice(0, 20);
+      // 仅本地开发模式允许 mock openid；生产未配置一律拒绝（防止伪造 openid 建号）
+      if (process.env.DEV_MODE === 'true' && process.env.NODE_ENV !== 'production') {
+        return 'dev_' + code.slice(0, 20);
+      }
+      throw new ServiceUnavailableException('微信登录未配置，请联系管理员');
     }
     const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${secret}&js_code=${code}&grant_type=authorization_code`;
     const res = await fetch(url);

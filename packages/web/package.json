@@ -11,15 +11,17 @@
   },
   "dependencies": {
     "@ai-prompt-hub/shared": "workspace:*",
+    "@vueuse/core": "^10.7.0",
     "axios": "^1.6.5",
+    "dompurify": "^3.4.13",
     "element-plus": "^2.5.0",
+    "marked": "^11.1.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.0",
-    "vue-router": "^4.2.5",
-    "@vueuse/core": "^10.7.0",
-    "marked": "^11.1.0"
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.2.0",
     "@types/node": "^20.11.0",
     "@vitejs/plugin-vue": "^5.0.0",
     "autoprefixer": "^10.4.17",

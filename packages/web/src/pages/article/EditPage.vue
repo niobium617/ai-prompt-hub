@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
 import { ElMessage } from 'element-plus';
+import { renderMarkdown } from '@/utils/sanitize';
 
 const router = useRouter();
 const title = ref('');
@@ -62,17 +63,10 @@ async function onPublish() {
   submitting.value = false;
 }
 
-// Markdown 预览
+// Markdown 预览（DOMPurify 净化，与正式渲染一致）
 const previewHtml = computed(() => {
   if (!content.value) return '';
-  return content.value
-    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/\n/g, '<br>')
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%;border-radius:8px;margin:8px 0">')
-    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
-    .replace(/##\s(.+)/g, '<h2 style="font-size:20px;font-weight:bold;margin:12px 0">$1</h2>')
-    .replace(/```([\s\S]*?)```/g, '<pre style="background:#1e293b;color:#4ade80;padding:12px;border-radius:8px;overflow-x:auto">$1</pre>')
-    .replace(/- (.+)/g, '<li style="margin-left:16px">$1</li>');
+  return renderMarkdown(content.value);
 });
 
 // Markdown 工具栏

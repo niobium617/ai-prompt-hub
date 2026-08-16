@@ -47,7 +47,7 @@ export class PromptController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '编辑提示词' })
   update(@Param('id') id: string, @Request() req: any, @Body() dto: UpdatePromptDto) {
-    return this.promptService.update(+id, req.user.id, dto);
+    return this.promptService.update(+id, req.user.id, req.user.role, dto);
   }
 
   @Post(':id/copy')

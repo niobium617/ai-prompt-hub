@@ -59,10 +59,6 @@ export class UpdatePromptDto {
   @ApiProperty({ description: '示例图片URL列表', required: false })
   @IsOptional() @IsArray()
   exampleImages?: string[];
-
-  @ApiProperty({ description: '状态', required: false })
-  @IsOptional() @IsInt()
-  status?: number;
 }
 
 export class QueryPromptDto {

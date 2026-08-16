@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { randomBytes } from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -118,7 +119,9 @@ async function main() {
   console.log(`✅ 创建了 ${tagNames.length} 个标签`);
 
   // ==================== 管理员账号 ====================
-  const adminHash = await bcrypt.hash('REMOVED-SECRET', 12);
+  // 密码随机生成并打印（仓库/历史中不再出现明文种子密码）
+  const adminPwd = randomBytes(9).toString('base64url');
+  const adminHash = await bcrypt.hash(adminPwd, 12);
   const admin = await prisma.user.create({
     data: {
       username: 'admin',
@@ -130,10 +133,11 @@ async function main() {
       points: 2000,
     },
   });
-  console.log('✅ 创建管理员账号: admin / REMOVED-SECRET');
+  console.log(`✅ 创建管理员账号: admin / ${adminPwd}（仅本次打印，请妥善保存）`);
 
   // ==================== 测试用户 ====================
-  const userHash = await bcrypt.hash('REMOVED-SECRET', 12);
+  const userPwd = randomBytes(9).toString('base64url');
+  const userHash = await bcrypt.hash(userPwd, 12);
   await prisma.user.create({
     data: {
       username: 'testuser',
@@ -143,7 +147,7 @@ async function main() {
       role: 'user',
     },
   });
-  console.log('✅ 创建测试用户: testuser / REMOVED-SECRET');
+  console.log(`✅ 创建测试用户: testuser / ${userPwd}（仅本次打印，请妥善保存）`);
 
   // ==================== 示例提示词 ====================
   const samplePrompts = [

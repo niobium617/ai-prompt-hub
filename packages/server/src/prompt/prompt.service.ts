@@ -90,14 +90,19 @@ export class PromptService {
     return { ...prompt, id: Number(prompt.id), categoryId: Number(prompt.categoryId) };
   }
 
-  async update(id: number, userId: number, dto: UpdatePromptDto) {
+  async update(id: number, userId: number, userRole: string, dto: UpdatePromptDto) {
     const prompt = await this.prisma.prompt.findUnique({ where: { id: id } });
     if (!prompt) throw new NotFoundException('提示词不存在');
+    // 仅作者本人或管理员可编辑
+    if (prompt.authorId !== userId && userRole !== 'admin' && userRole !== 'super_admin') {
+      throw new ForbiddenException('无权编辑他人内容');
+    }
 
     const data: any = { ...dto };
     if (dto.aiToolIds) data.aiToolIds = JSON.stringify(dto.aiToolIds);
     if (dto.exampleImages) data.exampleImages = JSON.stringify(dto.exampleImages);
-    delete data.categoryId; delete data.authorId;
+    // 状态只能由审核流程修改，防御性剥离
+    delete data.categoryId; delete data.authorId; delete data.status;
 
     const updated = await this.prisma.prompt.update({ where: { id: id }, data });
     return { ...updated, id: Number(updated.id), categoryId: Number(updated.categoryId) };

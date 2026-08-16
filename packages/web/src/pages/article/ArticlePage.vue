@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/api';
-import { marked } from 'marked';
+import { renderMarkdown } from '@/utils/sanitize';
 
 const route = useRoute();
 const article = ref<any>(null);
@@ -22,7 +22,7 @@ onMounted(async () => {
         <span>{{ new Date(article.createdAt).toLocaleDateString() }}</span>
         <span>👁 {{ article.viewCount }}</span>
       </div>
-      <div class="prose max-w-none" v-html="marked(article.content || '', { breaks: true, gfm: true })"></div>
+      <div class="prose max-w-none" v-html="renderMarkdown(article.content || '')"></div>
     </div>
   </div>
 </template>

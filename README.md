@@ -105,12 +105,14 @@ pnpm dev:web
 - API 文档（Swagger）：http://localhost:3000/api/docs
 - 数据库可视化：`pnpm db:studio`
 
-### 测试账号
+### 测试账号（本地开发）
 
-| 角色 | 邮箱 | 密码 |
-|------|------|------|
-| 管理员 | admin@prompt-hub.local | REMOVED-SECRET |
-| 普通用户 | test@prompt-hub.local | REMOVED-SECRET |
+| 角色 | 邮箱 |
+|------|------|
+| 管理员 | admin@prompt-hub.local |
+| 普通用户 | test@prompt-hub.local |
+
+> 本地初始密码由种子脚本随机生成并在终端打印（见 `packages/server/prisma/seed.ts`）。线上环境使用独立的强密码，切勿沿用本地密码。
 
 ## 📱 小程序开发
 
@@ -137,8 +139,8 @@ bash rollback.sh                          # 回滚版本
 | `DATABASE_URL` | 数据库连接（本地 SQLite / 生产 MySQL） |
 | `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` | JWT 密钥（生产环境必填，缺失会拒绝启动） |
 | `LLM_API_KEY` / `LLM_API_BASE_URL` / `LLM_MODEL` | AI 生成器配置（不配走 Mock） |
-| `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | 邮箱验证码（不配时验证码打印到日志） |
-| `WECHAT_APP_ID` / `WECHAT_APP_SECRET` | 小程序微信登录（不配时模拟模式） |
+| `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | 邮箱验证码（生产未配置时验证码功能拒绝服务，不会泄露验证码；仅本地开发模式打印验证码） |
+| `WECHAT_APP_ID` / `WECHAT_APP_SECRET` | 小程序微信登录（生产未配置时拒绝登录；仅本地开发模式支持模拟） |
 | `DEV_MODE` | 开发模式开关（true 时限测试账号可写） |
 
 ## 🤝 贡献

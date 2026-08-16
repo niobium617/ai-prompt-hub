@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Delete, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
+import { AdminResetPasswordDto } from './admin.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('管理后台')
@@ -72,12 +73,18 @@ export class AdminController {
   @Post('users/:id/status')
   @ApiOperation({ summary: '禁用/启用用户' })
   toggleUserStatus(@Param('id') id: string, @Request() req: any, @Body('status') status: number) {
-    return this.adminService.toggleUserStatus(+id, req.user.role, status);
+    return this.adminService.toggleUserStatus(+id, req.user.role, status, req.user.id);
   }
 
   @Post('users/:id/role')
   @ApiOperation({ summary: '修改用户角色' })
   updateUserRole(@Param('id') id: string, @Request() req: any, @Body('role') role: string) {
     return this.adminService.updateUserRole(+id, req.user.role, role);
+  }
+
+  @Post('users/:id/password')
+  @ApiOperation({ summary: '重置用户密码' })
+  resetUserPassword(@Param('id') id: string, @Request() req: any, @Body() dto: AdminResetPasswordDto) {
+    return this.adminService.resetUserPassword(+id, req.user.role, dto.password);
   }
 }
