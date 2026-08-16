@@ -18,7 +18,8 @@ echo "=== 3/4 构建 ==="
 pnpm build:server
 pnpm build:web
 
-echo "=== 4/4 重启服务 ==="
+echo "=== 4/4 部署 nginx 配置并重启服务 ==="
+sudo cp ~/ai-prompt-hub/nginx/ecs-default.conf /etc/nginx/sites-available/default
 pm2 restart aph-server --silent
 sudo systemctl restart nginx
 
