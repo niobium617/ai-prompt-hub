@@ -101,7 +101,7 @@ async function fetchPrompts() {
       <span class="text-sm text-gray-500">共 {{ total }} 条</span>
     </div>
 
-    <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:min-h-[788px]">
+    <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:min-h-[788px] lg:content-start">
       <div v-for="i in 6" :key="i" class="bg-white rounded-xl p-5 animate-pulse">
         <div class="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
         <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
@@ -114,8 +114,8 @@ async function fetchPrompts() {
       <p>暂无提示词</p>
     </div>
 
-    <!-- lg:min-h 按 3列×4行预留空间，分页切换高度恒定不跳动 -->
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:min-h-[788px]">
+    <!-- lg:min-h 按 3列×4行预留空间，content-start 防止行被拉伸，分页切换高度恒定 -->
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:min-h-[788px] lg:content-start">
       <PromptCard v-for="p in prompts" :key="p.id" :prompt="p" />
     </div>
 
