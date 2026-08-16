@@ -147,6 +147,12 @@ bash rollback.sh                          # 回滚版本
 
 欢迎 Issue 和 Pull Request。
 
+## 🔗 相关项目
+
+| 项目 | 说明 |
+|------|------|
+| [prompt-reverse-engineer-skill](https://github.com/niobium617/prompt-reverse-engineer-skill) | 多模态 Prompt 逆向工程 Skill：把文本/图片/视频作品逆向拆解为可复用的专业 Prompt，适配 Midjourney/Stable Diffusion/GPT-4/Sora 多模型格式，支持 Claude Code/Cursor/Codex/豆包四平台，附百分制质量评分。与本项目提示词库理念同源。 |
+
 ## 📄 License
 
 [个人学习许可协议](./LICENSE) — 仅供个人学习、研究使用，禁止任何商业用途。商业使用需另行授权。
