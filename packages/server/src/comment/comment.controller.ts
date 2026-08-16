@@ -25,6 +25,8 @@ export class CommentController {
   }
 
   @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '点赞评论' })
   like(@Param('id') id: string) {
     return this.commentService.like(+id);

@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PromptService } from './prompt.service';
 import { CreatePromptDto, UpdatePromptDto, QueryPromptDto } from './dto/prompt.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
 import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 
 @ApiTags('提示词')
@@ -29,9 +30,10 @@ export class PromptController {
   }
 
   @Get(':id')
+  @UseGuards(OptionalJwtAuthGuard)
   @ApiOperation({ summary: '提示词详情' })
-  findById(@Param('id') id: string) {
-    return this.promptService.findById(+id);
+  findById(@Param('id') id: string, @Request() req: any) {
+    return this.promptService.findById(+id, req.user ?? null);
   }
 
   @Post()
@@ -51,6 +53,8 @@ export class PromptController {
   }
 
   @Post(':id/copy')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '记录使用次数' })
   recordCopy(@Param('id') id: string) {
     return this.promptService.recordCopy(+id);

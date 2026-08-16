@@ -7,7 +7,9 @@ set -e
 cd ~/ai-prompt-hub
 
 echo "=== 1/4 拉取最新代码 ==="
-git pull
+# fetch + reset 兼容强制推送（历史清理）后的部署；.env/uploads/数据库为未跟踪文件不受影响
+git fetch origin
+git reset --hard origin/main
 
 echo "=== 2/4 安装新依赖（如有） ==="
 pnpm install

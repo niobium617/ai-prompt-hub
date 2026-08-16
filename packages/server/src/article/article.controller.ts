@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/article.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
 import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 
 @ApiTags('文章')
@@ -17,9 +18,10 @@ export class ArticleController {
   }
 
   @Get(':id')
+  @UseGuards(OptionalJwtAuthGuard)
   @ApiOperation({ summary: '文章详情' })
-  findById(@Param('id') id: string) {
-    return this.articleService.findById(+id);
+  findById(@Param('id') id: string, @Request() req: any) {
+    return this.articleService.findById(+id, req.user ?? null);
   }
 
   @Post()

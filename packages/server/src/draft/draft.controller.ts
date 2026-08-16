@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { DraftService } from './draft.service';
+import { CreateDraftDto, UpdateDraftDto } from './dto/draft.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { DevWriteGuard } from '../common/dev-mode/dev-write.guard';
 
@@ -14,8 +15,8 @@ export class DraftController {
   @Post()
   @UseGuards(DevWriteGuard)
   @ApiOperation({ summary: '基于公共提示词创建私有草稿' })
-  create(@Request() req: any, @Body() body: { sourcePromptId: number }) {
-    return this.draftService.createFromPrompt(req.user.id, body.sourcePromptId);
+  create(@Request() req: any, @Body() dto: CreateDraftDto) {
+    return this.draftService.createFromPrompt(req.user.id, dto.sourcePromptId, req.user.role);
   }
 
   @Get()
@@ -33,8 +34,8 @@ export class DraftController {
   @Put(':id')
   @UseGuards(DevWriteGuard)
   @ApiOperation({ summary: '保存草稿' })
-  update(@Param('id') id: string, @Request() req: any, @Body() body: any) {
-    return this.draftService.update(req.user.id, +id, body);
+  update(@Param('id') id: string, @Request() req: any, @Body() dto: UpdateDraftDto) {
+    return this.draftService.update(req.user.id, +id, dto);
   }
 
   @Delete(':id')

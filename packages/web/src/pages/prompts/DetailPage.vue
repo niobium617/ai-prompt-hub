@@ -27,7 +27,9 @@ async function fetchComments() {
 
 async function onCopy() {
   await navigator.clipboard.writeText(prompt.value.content);
-  await api.post(`/prompts/${prompt.value.id}/copy`);
+  try {
+    await api.post(`/prompts/${prompt.value.id}/copy`);
+  } catch { /* 未登录时使用计数不记录，复制本身已成功 */ }
   ElMessage.success('已复制到剪贴板');
 }
 
@@ -35,6 +37,12 @@ async function onFavorite() {
   if (!userStore.isLoggedIn) return ElMessage.warning('请先登录');
   await api.post('/user/favorites', { targetType: 'prompt', targetId: prompt.value.id });
   ElMessage.success('已收藏');
+}
+
+async function onLikeComment(c: any) {
+  if (!userStore.isLoggedIn) return ElMessage.warning('请先登录');
+  await api.post(`/comments/${c.id}/like`);
+  c.likeCount = (c.likeCount || 0) + 1;
 }
 
 async function onRate(score: number) {
@@ -137,7 +145,7 @@ async function onCreateDraft() {
         </div>
         <p class="text-gray-600 text-sm">{{ c.content }}</p>
         <div class="flex gap-4 mt-2 text-xs text-gray-400">
-          <span @click="api.post(`/comments/${c.id}/like`)" class="cursor-pointer hover:text-primary-500">👍 {{ c.likeCount }}</span>
+          <span @click="onLikeComment(c)" class="cursor-pointer hover:text-primary-500">👍 {{ c.likeCount }}</span>
           <span class="cursor-pointer hover:text-primary-500">回复</span>
         </div>
       </div>

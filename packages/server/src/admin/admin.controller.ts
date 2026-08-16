@@ -47,6 +47,24 @@ export class AdminController {
     return this.adminService.getPublishedPrompts(page, pageSize, req.user.role);
   }
 
+  @Get('articles/pending')
+  @ApiOperation({ summary: '待审核文章列表' })
+  getPendingArticles(@Request() req: any, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {
+    return this.adminService.getPendingArticles(page, pageSize, req.user.role);
+  }
+
+  @Post('articles/:id/approve')
+  @ApiOperation({ summary: '文章审核通过' })
+  approveArticle(@Param('id') id: string, @Request() req: any) {
+    return this.adminService.approveArticle(+id, req.user.role);
+  }
+
+  @Post('articles/:id/reject')
+  @ApiOperation({ summary: '文章审核驳回' })
+  rejectArticle(@Param('id') id: string, @Request() req: any, @Body('reason') reason?: string) {
+    return this.adminService.rejectArticle(+id, req.user.role, reason);
+  }
+
   @Get('articles/published')
   @ApiOperation({ summary: '已发布文章列表' })
   getPublishedArticles(@Request() req: any, @Query('page') page?: number, @Query('pageSize') pageSize?: number) {

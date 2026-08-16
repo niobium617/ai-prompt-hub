@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { AiToolService } from './ai-tool.service';
 
 @ApiTags('AI工具')
@@ -14,6 +15,7 @@ export class AiToolController {
   }
 
   @Post('prompt-generator')
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Prompt生成器' })
   generate(@Body() body: {
     category: string;
@@ -25,6 +27,7 @@ export class AiToolController {
   }
 
   @Post('prompt-optimizer')
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Prompt优化器' })
   optimize(@Body() body: {
     originalPrompt: string;

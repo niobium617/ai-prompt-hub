@@ -4,6 +4,7 @@ import api from '@/api';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 const pendingPrompts = ref<any[]>([]);
+const pendingArticles = ref<any[]>([]);
 const publishedPrompts = ref<any[]>([]);
 const publishedArticles = ref<any[]>([]);
 const stats = ref<any>({});
@@ -26,11 +27,13 @@ let userDebounce: ReturnType<typeof setTimeout>;
 onMounted(fetchData);
 
 async function fetchData() {
-  const [pRes, sRes] = await Promise.all([
+  const [pRes, aRes, sRes] = await Promise.all([
     api.get('/admin/prompts/pending'),
+    api.get('/admin/articles/pending'),
     api.get('/admin/stats'),
   ]);
   pendingPrompts.value = pRes.items;
+  pendingArticles.value = aRes.items;
   stats.value = sRes;
 }
 
@@ -115,6 +118,24 @@ async function reject(id: number) {
   } catch { /* cancelled */ }
 }
 
+async function approveArticle(id: number) {
+  try {
+    await ElMessageBox.confirm('确认通过该文章？', '审核通过', { type: 'success' });
+    await api.post(`/admin/articles/${id}/approve`);
+    ElMessage.success('已通过');
+    fetchData();
+  } catch { /* cancelled */ }
+}
+
+async function rejectArticle(id: number) {
+  try {
+    await ElMessageBox.confirm('确认驳回该文章？', '审核驳回', { type: 'warning' });
+    await api.post(`/admin/articles/${id}/reject`);
+    ElMessage.success('已驳回');
+    fetchData();
+  } catch { /* cancelled */ }
+}
+
 /** 通用：删除并通知（提示词/文章） */
 async function removeWithReason(url: string, title: string, typeName: string) {
   try {
@@ -165,7 +186,7 @@ function removeArticle(id: number, title: string) {
     <!-- 页签切换 -->
     <div class="flex gap-2 mb-4 flex-wrap">
       <el-button :type="activeTab === 'pending' ? 'primary' : 'default'" size="small" @click="onTabChange('pending')">
-        待审核 ({{ pendingPrompts.length }})
+        待审核 ({{ pendingPrompts.length + pendingArticles.length }})
       </el-button>
       <el-button :type="activeTab === 'published' ? 'primary' : 'default'" size="small" @click="onTabChange('published')">
         已发布内容
@@ -175,25 +196,53 @@ function removeArticle(id: number, title: string) {
       </el-button>
     </div>
 
-    <!-- 待审核提示词 -->
-    <div v-if="activeTab === 'pending'" class="bg-white rounded-xl p-6">
-      <h2 class="font-semibold mb-4">📋 待审核提示词 ({{ pendingPrompts.length }})</h2>
-      <div v-if="pendingPrompts.length === 0" class="text-center py-12 text-gray-400">
-        <div class="text-4xl mb-3">✅</div>
-        <p>暂无待审核内容</p>
-      </div>
-      <div v-else class="space-y-4">
-        <div v-for="p in pendingPrompts" :key="p.id" class="border rounded-xl p-4 hover:bg-gray-50">
-          <h3 class="font-semibold mb-2">{{ p.title }}</h3>
-          <p class="text-sm text-gray-500 mb-2">{{ p.description }}</p>
-          <div class="flex items-center justify-between flex-wrap gap-2">
-            <div class="text-xs text-gray-400">
-              {{ p.category?.name }} · 作者：{{ p.author?.nickname }} (@{{ p.author?.username }}) · {{ new Date(p.createdAt).toLocaleDateString() }}
+    <!-- 待审核 -->
+    <div v-if="activeTab === 'pending'" class="space-y-6">
+      <!-- 待审核提示词 -->
+      <div class="bg-white rounded-xl p-6">
+        <h2 class="font-semibold mb-4">📋 待审核提示词 ({{ pendingPrompts.length }})</h2>
+        <div v-if="pendingPrompts.length === 0" class="text-center py-12 text-gray-400">
+          <div class="text-4xl mb-3">✅</div>
+          <p>暂无待审核内容</p>
+        </div>
+        <div v-else class="space-y-4">
+          <div v-for="p in pendingPrompts" :key="p.id" class="border rounded-xl p-4 hover:bg-gray-50">
+            <h3 class="font-semibold mb-2">{{ p.title }}</h3>
+            <p class="text-sm text-gray-500 mb-2">{{ p.description }}</p>
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="text-xs text-gray-400">
+                {{ p.category?.name }} · 作者：{{ p.author?.nickname }} (@{{ p.author?.username }}) · {{ new Date(p.createdAt).toLocaleDateString() }}
+              </div>
+              <div class="flex gap-2">
+                <el-button size="small" type="success" @click="approve(p.id)">通过</el-button>
+                <el-button size="small" type="danger" @click="reject(p.id)">驳回</el-button>
+                <el-button size="small" type="danger" plain @click="removePrompt(p.id, p.title)">🗑 删除</el-button>
+              </div>
             </div>
-            <div class="flex gap-2">
-              <el-button size="small" type="success" @click="approve(p.id)">通过</el-button>
-              <el-button size="small" type="danger" @click="reject(p.id)">驳回</el-button>
-              <el-button size="small" type="danger" plain @click="removePrompt(p.id, p.title)">🗑 删除</el-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 待审核文章 -->
+      <div class="bg-white rounded-xl p-6">
+        <h2 class="font-semibold mb-4">📰 待审核文章 ({{ pendingArticles.length }})</h2>
+        <div v-if="pendingArticles.length === 0" class="text-center py-12 text-gray-400">
+          <div class="text-4xl mb-3">✅</div>
+          <p>暂无待审核内容</p>
+        </div>
+        <div v-else class="space-y-4">
+          <div v-for="a in pendingArticles" :key="a.id" class="border rounded-xl p-4 hover:bg-gray-50">
+            <h3 class="font-semibold mb-2">{{ a.title }}</h3>
+            <p class="text-sm text-gray-500 mb-2">{{ a.summary }}</p>
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="text-xs text-gray-400">
+                作者：{{ a.author?.nickname }} (@{{ a.author?.username }}) · {{ new Date(a.createdAt).toLocaleDateString() }}
+              </div>
+              <div class="flex gap-2">
+                <el-button size="small" type="success" @click="approveArticle(a.id)">通过</el-button>
+                <el-button size="small" type="danger" @click="rejectArticle(a.id)">驳回</el-button>
+                <el-button size="small" type="danger" plain @click="removeArticle(a.id, a.title)">🗑 删除</el-button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsOptional, IsArray, MaxLength } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsArray, MaxLength, ArrayMaxSize } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateArticleDto {
@@ -14,6 +14,7 @@ export class CreateArticleDto {
 
   @ApiProperty({ description: '内容(Markdown)' })
   @IsString()
+  @MaxLength(100000)
   content: string;
 
   @ApiProperty({ description: '分类ID', required: false })
@@ -22,9 +23,12 @@ export class CreateArticleDto {
 
   @ApiProperty({ description: '标签ID列表', required: false })
   @IsOptional() @IsArray()
+  @ArrayMaxSize(20)
   tagIds?: number[];
 
   @ApiProperty({ description: '章节结构', required: false })
   @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(100)
   chapterStructure?: object[];
 }

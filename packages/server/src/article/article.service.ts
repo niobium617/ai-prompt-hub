@@ -24,13 +24,24 @@ export class ArticleService {
     };
   }
 
-  async findById(id: number) {
+  async findById(id: number, viewer?: { id: number; role: string } | null) {
     const article = await this.prisma.article.findUnique({
       where: { id: id },
       include: { author: { select: { id: true, nickname: true, avatarUrl: true } } },
     });
     if (!article) throw new NotFoundException('文章不存在');
-    await this.prisma.article.update({ where: { id: id }, data: { viewCount: { increment: 1 } } });
+
+    // 非公开状态仅作者本人或管理员可见（404 防存在性探测）
+    if (article.status !== 1) {
+      const isOwner = viewer && Number(viewer.id) === article.authorId;
+      const isAdmin = viewer && ['admin', 'super_admin'].includes(viewer.role);
+      if (!isOwner && !isAdmin) throw new NotFoundException('文章不存在');
+    }
+
+    // 浏览量（仅公开内容）
+    if (article.status === 1) {
+      await this.prisma.article.update({ where: { id: id }, data: { viewCount: { increment: 1 } } });
+    }
     return { ...article, id: Number(article.id), author: { ...article.author, id: Number(article.author.id) } };
   }
 
@@ -44,8 +55,7 @@ export class ArticleService {
         categoryId: dto.categoryId ? dto.categoryId : null,
         tagIds: JSON.stringify(dto.tagIds || []),
         chapterStructure: dto.chapterStructure ? JSON.stringify(dto.chapterStructure) : null,
-        status: 1,
-        publishedAt: new Date(),
+        status: 0, // 新发布一律进入待审核队列（publishedAt 由审核通过时写入）
       },
     });
     return { ...article, id: Number(article.id) };

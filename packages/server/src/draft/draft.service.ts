@@ -9,9 +9,13 @@ export class DraftService {
    * 基于公共提示词创建私有草稿（复制原文，不改动公共数据）
    * 同一用户对同一来源重复创建时，返回已有草稿（幂等）
    */
-  async createFromPrompt(userId: number, sourcePromptId: number) {
+  async createFromPrompt(userId: number, sourcePromptId: number, userRole?: string) {
     const source = await this.prisma.prompt.findUnique({ where: { id: sourcePromptId } });
     if (!source) throw new NotFoundException('来源提示词不存在');
+    // 仅已发布内容或本人/管理员的内容可派生草稿
+    if (source.status !== 2 && source.authorId !== userId && userRole !== 'admin' && userRole !== 'super_admin') {
+      throw new ForbiddenException('该内容未发布，无法派生草稿');
+    }
 
     // 已有基于该来源的草稿 → 直接返回，不重复创建
     const existing = await this.prisma.promptDraft.findFirst({

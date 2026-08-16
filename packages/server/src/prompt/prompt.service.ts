@@ -7,8 +7,9 @@ export class PromptService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(query: QueryPromptDto) {
-    const { page = 1, pageSize = 12, categoryId, difficulty, status = 2, sort = 'newest', aiToolId } = query;
-    const where: any = { status };
+    const { page = 1, pageSize = 12, categoryId, difficulty, sort = 'newest', aiToolId } = query;
+    // 公开列表固定只显示已发布内容（待审/草稿不可被外部查询）
+    const where: any = { status: 2 };
 
     if (categoryId) {
       // 查找分类及其子分类
@@ -52,15 +53,24 @@ export class PromptService {
     return { items: mappedItems, total, page: Number(page) || 1, pageSize: Number(pageSize) || 12, totalPages: Math.ceil(total / Number(pageSize) || 12) };
   }
 
-  async findById(id: number) {
+  async findById(id: number, viewer?: { id: number; role: string } | null) {
     const prompt = await this.prisma.prompt.findUnique({
       where: { id: id },
       include: { category: true, author: { select: { id: true, nickname: true, avatarUrl: true, username: true } } },
     });
     if (!prompt) throw new NotFoundException('提示词不存在');
 
-    // 增加浏览量
-    await this.prisma.prompt.update({ where: { id: id }, data: { viewCount: { increment: 1 } } });
+    // 非公开状态仅作者本人或管理员可见（404 防存在性探测）
+    if (prompt.status !== 2) {
+      const isOwner = viewer && Number(viewer.id) === prompt.authorId;
+      const isAdmin = viewer && ['admin', 'super_admin'].includes(viewer.role);
+      if (!isOwner && !isAdmin) throw new NotFoundException('提示词不存在');
+    }
+
+    // 增加浏览量（仅公开内容）
+    if (prompt.status === 2) {
+      await this.prisma.prompt.update({ where: { id: id }, data: { viewCount: { increment: 1 } } });
+    }
 
     return {
       ...prompt,
@@ -84,7 +94,7 @@ export class PromptService {
         difficulty: dto.difficulty || 1,
         aiToolIds: JSON.stringify(dto.aiToolIds || []),
         exampleImages: JSON.stringify(dto.exampleImages || []),
-        status: 0, // 草稿
+        status: 1, // 新发布一律进入待审核队列
       },
     });
     return { ...prompt, id: Number(prompt.id), categoryId: Number(prompt.categoryId) };

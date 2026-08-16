@@ -164,6 +164,14 @@ async function onChangePassword() {
       <h2 class="font-semibold mb-4">📝 我的投稿（共 {{ myTotal }} 条）</h2>
       <div v-if="myPrompts.length" class="space-y-3">
         <div v-for="p in myPrompts" :key="p.id">
+          <div class="flex items-center justify-between mb-1.5">
+            <el-tag
+              size="small"
+              :type="p.status === 2 ? 'success' : p.status === 1 ? 'warning' : p.status === 3 ? 'danger' : 'info'"
+            >
+              {{ p.status === 2 ? '已发布' : p.status === 1 ? '审核中' : p.status === 3 ? '已驳回' : '草稿' }}
+            </el-tag>
+          </div>
           <PromptCard :prompt="p" />
           <div class="flex justify-end mt-1.5">
             <el-button

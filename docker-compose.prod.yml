@@ -30,10 +30,11 @@ services:
     volumes:
       - ./packages/server/uploads:/app/uploads
     environment:
-      DATABASE_URL: mysql://root:${DB_ROOT_PASSWORD:-root123}@mysql:3306/ai_prompt_hub
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-REMOVED-SECRET}
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-REMOVED-SECRET}
-      LLM_API_KEY: ${LLM_API_KEY:-your-api-key}
+      # 必填项缺失直接报错，杜绝弱密钥兜底（注意：此文件为 legacy Docker/MySQL 方案，当前生产为 PM2 + SQLite）
+      DATABASE_URL: mysql://root:${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD 未配置}@mysql:3306/ai_prompt_hub
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?JWT_ACCESS_SECRET 未配置}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET 未配置}
+      LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_API_BASE_URL: ${LLM_API_BASE_URL:-https://api.openai.com/v1}
       LLM_MODEL: ${LLM_MODEL:-gpt-3.5-turbo}
       NODE_ENV: production
@@ -50,7 +51,7 @@ services:
     container_name: aph-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root123}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD 未配置}
       MYSQL_DATABASE: ai_prompt_hub
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     expose:

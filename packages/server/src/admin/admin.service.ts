@@ -97,6 +97,62 @@ export class AdminService {
   }
 
   /**
+   * 待审核文章列表
+   */
+  async getPendingArticles(page = 1, pageSize = 20, userRole: string) {
+    this.checkAdmin(userRole);
+    const where = { status: 0 };
+    const [items, total] = await Promise.all([
+      this.prisma.article.findMany({
+        where,
+        skip: ((Number(page) || 1) - 1) * (Number(pageSize) || 20),
+        take: (Number(pageSize) || 20),
+        orderBy: { createdAt: 'desc' },
+        include: { author: { select: { id: true, nickname: true, username: true } } },
+      }),
+      this.prisma.article.count({ where }),
+    ]);
+    return {
+      items: items.map(a => ({ ...a, id: Number(a.id), author: { ...a.author, id: Number(a.author.id) } })),
+      total, page, pageSize,
+    };
+  }
+
+  /**
+   * 文章审核通过（发布并通知作者）
+   */
+  async approveArticle(articleId: number, userRole: string) {
+    this.checkAdmin(userRole);
+    const article = await this.prisma.article.findUnique({ where: { id: articleId } });
+    if (!article) throw new NotFoundException('文章不存在');
+    await this.prisma.article.update({ where: { id: articleId }, data: { status: 1, publishedAt: new Date() } });
+    await this.notificationService.create(
+      article.authorId,
+      'approve',
+      '文章已通过审核',
+      `《${article.title}》已通过审核并发布。`,
+    );
+    return { success: true };
+  }
+
+  /**
+   * 文章审核驳回（通知作者）
+   */
+  async rejectArticle(articleId: number, userRole: string, reason?: string) {
+    this.checkAdmin(userRole);
+    const article = await this.prisma.article.findUnique({ where: { id: articleId } });
+    if (!article) throw new NotFoundException('文章不存在');
+    await this.prisma.article.update({ where: { id: articleId }, data: { status: 2 } });
+    await this.notificationService.create(
+      article.authorId,
+      'reject',
+      '文章未通过审核',
+      `《${article.title}》${reason ? `因「${reason}」` : ''}未通过审核，可修改后重新提交。`,
+    );
+    return { success: true };
+  }
+
+  /**
    * 已发布文章列表
    */
   async getPublishedArticles(page = 1, pageSize = 20, userRole: string) {

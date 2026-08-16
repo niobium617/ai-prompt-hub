@@ -17,7 +17,8 @@ jobs:
           key: ${{ secrets.ECS_SSH_KEY }}
           script: |
             cd ~/ai-prompt-hub
-            git pull
+            git fetch origin
+            git reset --hard origin/main
             pnpm install --silent || true
             pnpm build:server
             pnpm build:web

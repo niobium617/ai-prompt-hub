@@ -35,7 +35,8 @@ export class AuthService {
       },
     });
     if (existing) {
-      throw new UnauthorizedException('邮箱或用户名已存在');
+      // 统一文案，避免账号枚举
+      throw new UnauthorizedException('注册失败，请稍后重试');
     }
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
