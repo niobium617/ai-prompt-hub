@@ -15,6 +15,32 @@ AI 提示词社区分享平台 — 集提示词库、AI 技能教程、在线工
 | **管理后台** | 内容审核、已发布管理、用户管理（禁用/角色）、数据统计 |
 | **开发模式** | 站点徽章标识，限制写操作仅测试账号，防止公测期数据污染 |
 
+## 📸 效果图
+
+### Web 端
+
+<p align="center">
+  <img src="./docs/screenshots/home.png" width="75%" alt="首页" />
+</p>
+
+| 提示词广场 | 提示词详情 |
+|:---:|:---:|
+| ![提示词广场](./docs/screenshots/prompts.png) | ![提示词详情](./docs/screenshots/detail.png) |
+
+| AI 生成器 | 登录页 |
+|:---:|:---:|
+| ![AI 生成器](./docs/screenshots/generator.png) | ![登录页](./docs/screenshots/login.png) |
+
+| 个人中心 | 我的收藏 |
+|:---:|:---:|
+| ![个人中心](./docs/screenshots/user.png) | ![我的收藏](./docs/screenshots/favorites.png) |
+
+### 移动端
+
+<p align="center">
+  <img src="./docs/screenshots/home-mobile.png" width="28%" alt="移动端首页" />
+</p>
+
 ## 🏗️ 技术栈
 
 | 层级 | 技术 |
