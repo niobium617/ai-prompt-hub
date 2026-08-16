@@ -265,7 +265,7 @@ function openTutorial(t: Tutorial) {
         v-for="t in filteredTutorials" :key="t.id"
         @click="openTutorial(t)"
         class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-lg transition border hover:border-primary-200"
-        :class="t.official ? 'border-primary-300 ring-2 ring-primary-100' : 'border-gray-100'"
+        :class="t.official ? 'border-red-200' : 'border-gray-100'"
       >
         <div class="flex items-start justify-between mb-3">
           <div class="text-3xl">{{ t.icon }}</div>

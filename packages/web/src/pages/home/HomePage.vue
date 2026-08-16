@@ -72,7 +72,7 @@ function onSearch() {
       <a
         href="https://github.com/niobium617/prompt-reverse-engineer-skill"
         target="_blank"
-        class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-5 border-2 border-primary-300 hover:shadow-lg transition cursor-pointer"
+        class="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-lg transition cursor-pointer"
       >
         <div class="flex items-center justify-between mb-3">
           <span class="text-3xl">🔬</span>

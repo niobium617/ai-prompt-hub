@@ -37,8 +37,8 @@
 .empty { text-align: center; color: #ccc; padding: 60rpx 0; font-size: 26rpx; }
 
 .official-card {
-  background: linear-gradient(135deg, #eff6ff, #e0e7ff);
-  border: 2rpx solid #bfdbfe;
+  background: #fff;
+  border: 2rpx solid #fecaca;
   border-radius: 16rpx;
   padding: 24rpx;
   margin-bottom: 16rpx;
