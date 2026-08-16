@@ -68,6 +68,22 @@ function onSearch() {
       <router-link to="/prompts?sort=rating" class="text-primary-600 text-sm">查看更多 →</router-link>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- 官方置顶 Skill 卡片 -->
+      <a
+        href="https://github.com/niobium617/prompt-reverse-engineer-skill"
+        target="_blank"
+        class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-5 border-2 border-primary-300 hover:shadow-lg transition cursor-pointer"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-3xl">🔬</span>
+          <span class="px-2 py-0.5 rounded-full bg-red-500 text-white text-xs font-medium">📌 官方</span>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Prompt 逆向工程 Skill</h3>
+        <p class="text-sm text-gray-600 line-clamp-2 mb-3">
+          官方发布的 Claude Skill：从 AI 输出逆向还原生成提示词，快速提取高质量 Prompt 技巧。
+        </p>
+        <div class="text-xs text-primary-600 truncate">🐙 github.com/niobium617/prompt-reverse-engineer-skill</div>
+      </a>
       <PromptCard v-for="p in featuredPrompts" :key="p.id" :prompt="p" />
     </div>
   </section>

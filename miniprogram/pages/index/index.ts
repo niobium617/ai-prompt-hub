@@ -42,4 +42,12 @@ Page({
   goTools() {
     wx.navigateTo({ url: '/pages/tools/tools' });
   },
+
+  /** 复制官方 Skill 项目地址 */
+  copySkillLink() {
+    wx.setClipboardData({
+      data: 'https://github.com/niobium617/prompt-reverse-engineer-skill',
+      success: () => wx.showToast({ title: '链接已复制，浏览器打开', icon: 'none' }),
+    });
+  },
 });

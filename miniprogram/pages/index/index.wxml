@@ -38,6 +38,16 @@
     </view>
     <view wx:if="{{featuredPrompts.length === 0}}" class="empty">暂无精选</view>
     <view wx:else class="prompt-list">
+      <!-- 官方置顶 Skill 卡片 -->
+      <view class="official-card" bindtap="copySkillLink">
+        <view class="official-badge">📌 官方</view>
+        <view class="official-title">🔬 Prompt 逆向工程 Skill</view>
+        <view class="official-desc">官方发布的 Claude Skill：从 AI 输出逆向还原生成提示词，快速提取高质量 Prompt 技巧。</view>
+        <view class="official-foot">
+          <text class="official-link">🐙 github.com/niobium617/prompt-reverse-engineer-skill</text>
+          <text class="official-copy">复制</text>
+        </view>
+      </view>
       <view class="card" wx:for="{{featuredPrompts}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
         <view class="card-header">
           <view class="card-title">{{item.title}}</view>
