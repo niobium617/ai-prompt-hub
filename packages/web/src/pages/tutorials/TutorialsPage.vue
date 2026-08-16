@@ -12,9 +12,24 @@ interface Tutorial {
   usageSteps: string[];
   promptExample: string;
   tags: string[];
+  official?: boolean;
 }
 
 const tutorials = ref<Tutorial[]>([
+  {
+    id: 0, icon: '🔬', title: 'Prompt 逆向工程 Skill', category: '官方', official: true,
+    description: '官方发布的 Claude Skill：从 AI 输出逆向还原生成提示词，快速提取高质量 Prompt 技巧。',
+    githubUrl: 'https://github.com/niobium617/prompt-reverse-engineer-skill',
+    githubDesc: 'prompt-reverse-engineer-skill — 官方 Skill 项目，逆向工程还原提示词',
+    usageSteps: [
+      '打开 GitHub 仓库查看完整说明',
+      '将 skill 安装到 Claude Code（skills 目录）',
+      '对任意 AI 输出使用该 skill 逆向还原 Prompt',
+      '将还原出的提示词应用到自己的场景',
+    ],
+    promptExample: '使用 skill 对一段高质量的 AI 输出进行逆向分析，提取其隐含的系统提示词结构和写作技巧。',
+    tags: ['官方', 'Skill', '逆向工程', 'Claude'],
+  },
   {
     id: 1, icon: '🤖', title: 'ChatGPT 高效使用指南', category: 'AI对话',
     description: 'OpenAI 的 ChatGPT 是目前最流行的AI对话工具。本教程教你如何写出高质量 Prompt，充分利用 ChatGPT 的能力。',
@@ -249,13 +264,19 @@ function openTutorial(t: Tutorial) {
       <div
         v-for="t in filteredTutorials" :key="t.id"
         @click="openTutorial(t)"
-        class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-lg transition border border-gray-100 hover:border-primary-200"
+        class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-lg transition border hover:border-primary-200"
+        :class="t.official ? 'border-primary-300 ring-2 ring-primary-100' : 'border-gray-100'"
       >
         <div class="flex items-start justify-between mb-3">
           <div class="text-3xl">{{ t.icon }}</div>
-          <el-tag size="small" type="warning" effect="plain">{{ t.category }}</el-tag>
+          <div class="flex gap-1.5">
+            <el-tag v-if="t.official" size="small" type="danger" effect="dark">官方</el-tag>
+            <el-tag size="small" type="warning" effect="plain">{{ t.category }}</el-tag>
+          </div>
         </div>
-        <h3 class="font-semibold text-gray-800 mb-2 line-clamp-1">{{ t.title }}</h3>
+        <h3 class="font-semibold text-gray-800 mb-2 line-clamp-1">
+          <span v-if="t.official" class="mr-1">📌</span>{{ t.title }}
+        </h3>
         <p class="text-sm text-gray-500 line-clamp-2 mb-4">{{ t.description }}</p>
         <div class="flex flex-wrap gap-1.5">
           <el-tag v-for="tag in t.tags.slice(0, 3)" :key="tag" size="small" type="info" effect="plain">{{ tag }}</el-tag>

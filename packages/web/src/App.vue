@@ -140,6 +140,7 @@ watch(() => route.fullPath, fetchUnread);
             <h4 class="font-semibold text-gray-700 mb-3">GitHub</h4>
             <div class="space-y-2">
               <a href="https://github.com/niobium617/ai-prompt-hub" target="_blank" class="block text-gray-500 hover:text-primary-600">📂 本项目源码</a>
+              <a href="https://github.com/niobium617/prompt-reverse-engineer-skill" target="_blank" class="block text-gray-500 hover:text-primary-600">🔬 官方逆向工程 Skill</a>
               <a href="https://github.com/f/awesome-chatgpt-prompts" target="_blank" class="block text-gray-500 hover:text-primary-600">⭐ Awesome Prompts</a>
               <a href="https://github.com/dair-ai/Prompt-Engineering-Guide" target="_blank" class="block text-gray-500 hover:text-primary-600">📖 Prompt工程指南</a>
             </div>

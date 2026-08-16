@@ -10,3 +10,24 @@
 .card-desc { font-size: 24rpx; color: #999; margin-bottom: 8rpx; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .card-foot { font-size: 22rpx; color: #bbb; }
 .empty { text-align: center; color: #ccc; padding: 60rpx 0; font-size: 26rpx; }
+.official-card {
+  margin: 24rpx;
+  background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+  border: 2rpx solid #bfdbfe;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+}
+.official-badge {
+  display: inline-block;
+  background: #ef4444;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  margin-bottom: 12rpx;
+}
+.official-title { font-size: 30rpx; font-weight: 600; margin-bottom: 8rpx; }
+.official-desc { font-size: 24rpx; color: #666; line-height: 1.5; margin-bottom: 12rpx; }
+.official-foot { display: flex; justify-content: space-between; align-items: center; }
+.official-link { font-size: 22rpx; color: #3b82f6; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.official-copy { font-size: 22rpx; color: #fff; background: #3b82f6; padding: 6rpx 20rpx; border-radius: 999rpx; flex-shrink: 0; }
