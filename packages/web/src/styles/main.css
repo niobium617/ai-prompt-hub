@@ -13,6 +13,11 @@
   box-sizing: border-box;
 }
 
+/* 始终预留滚动条空间，防止 sticky 侧边栏左右抖动 */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
