@@ -119,4 +119,4 @@ bash rollback.sh                          # 回滚版本
 
 ## 📄 License
 
-[MIT](./LICENSE)
+[个人学习许可协议](./LICENSE) — 仅供个人学习、研究使用，禁止任何商业用途。商业使用需另行授权。

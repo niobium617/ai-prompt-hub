@@ -1,3 +1,9 @@
+/**
+ * AI Prompt Hub
+ * 版权 (C) 2026 niobium617 — 仅供个人学习，禁止商用
+ * 详情见 LICENSE 文件
+ */
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';

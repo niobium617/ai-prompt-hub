@@ -1,21 +1,42 @@
-MIT License
+AI Prompt Hub 个人学习许可协议
+Personal Learning License
 
-Copyright (c) 2026 AI Prompt Hub
+版权所有 (C) 2026 niobium617
+保留所有权利。
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+═══════════════════════════════════════════════════════════════
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+一、授权范围
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+本软件（包括全部源代码、文档、设计资源）仅授权用于：
+
+  ✅ 个人学习、研究与教育目的
+  ✅ 个人本地或私有环境部署运行
+  ✅ 学习参考、代码阅读、技术交流
+  ✅ 修改源代码并用于个人学习
+
+二、禁止行为
+
+  ❌ 任何形式的商业用途，包括但不限于：
+     - 将本软件或其衍生版本用于商业运营、盈利服务
+     - 销售、出租、转让本软件或其衍生版本
+     - 作为商业产品/服务的组成部分对外提供
+     - 用于任何以盈利为目的的场景
+
+  ❌ 移除或篡改源代码中的版权声明与许可信息
+
+三、免责声明
+
+本软件按"现状"提供，作者不对其适用性、可靠性或准确性
+作任何明示或暗示的保证。因使用本软件造成的任何损失，
+作者不承担任何责任。
+
+四、商业授权
+
+如需商业使用，请联系版权所有者获取商业授权。
+
+═══════════════════════════════════════════════════════════════
+
+Copyright (C) 2026 niobium617. All rights reserved.
+This software is provided for personal learning only.
+Any commercial use is strictly prohibited without written permission.

@@ -150,7 +150,7 @@ watch(() => route.fullPath, fetchUnread);
             <div class="space-y-2">
               <span class="block text-gray-500">Powered by Vue 3 + NestJS</span>
               <span class="block text-gray-500">SQLite + Prisma</span>
-              <span class="block text-gray-400 text-xs mt-2">© 2024 AI Prompt Hub</span>
+              <span class="block text-gray-400 text-xs mt-2">© 2026 niobium617 · 仅供个人学习，禁止商用</span>
             </div>
           </div>
         </div>
