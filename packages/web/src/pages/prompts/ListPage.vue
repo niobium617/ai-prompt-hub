@@ -48,7 +48,7 @@ async function fetchPrompts() {
   <div class="flex gap-6">
     <!-- 侧边筛选栏 -->
     <aside class="hidden lg:block w-56 flex-shrink-0">
-      <div class="bg-white rounded-xl p-4 sticky top-20">
+      <div class="bg-white rounded-xl p-4">
         <h3 class="font-semibold mb-3">📁 分类</h3>
         <div class="space-y-1 mb-6">
           <div
