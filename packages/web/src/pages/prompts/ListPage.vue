@@ -110,7 +110,8 @@ async function fetchPrompts() {
         <p>暂无提示词</p>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- lg:min-h 按 3列×4行预留空间，分页切换高度恒定不跳动 -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:min-h-[790px]">
         <PromptCard v-for="p in prompts" :key="p.id" :prompt="p" />
       </div>
 
