@@ -12,7 +12,7 @@ function goDetail() {
 <template>
   <div
     @click="goDetail"
-    class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-lg transition border border-gray-100 hover:border-primary-200"
+    class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-lg transition border border-gray-100 hover:border-primary-200 flex flex-col min-h-[185px]"
   >
     <div class="flex items-start justify-between mb-3">
       <h3 class="font-semibold text-gray-800 line-clamp-2 flex-1">{{ prompt.title }}</h3>
@@ -21,7 +21,7 @@ function goDetail() {
       <el-tag v-else size="small" type="danger">高级</el-tag>
     </div>
     <p class="text-sm text-gray-500 line-clamp-2 mb-4">{{ prompt.description }}</p>
-    <div class="flex items-center justify-between text-xs text-gray-400">
+    <div class="flex items-center justify-between text-xs text-gray-400 mt-auto">
       <span class="flex items-center gap-1">📁 {{ prompt.category?.name || '未分类' }}</span>
       <div class="flex items-center gap-3">
         <span>👁 {{ prompt.viewCount }}</span>
