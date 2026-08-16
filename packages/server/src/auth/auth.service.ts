@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { MailService } from '../common/mail/mail.service';
+import { getSecret } from '../common/config/secrets';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 
 @Injectable()
@@ -76,7 +77,7 @@ export class AuthService {
   async refreshToken(refreshToken: string) {
     try {
       const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET || 'dev-placeholder',
+        secret: getSecret('JWT_REFRESH_SECRET'),
       });
       const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
       if (!user || user.status === 0) {
@@ -219,7 +220,7 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, {
-        secret: process.env.JWT_REFRESH_SECRET || 'dev-placeholder',
+        secret: getSecret('JWT_REFRESH_SECRET'),
         expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
       }),
     };
