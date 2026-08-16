@@ -85,7 +85,7 @@ Page({
 
   // 直接 wx.request 封装，避免模块导入问题
   request(url: string, method: string): Promise<any> {
-    const BASE = 'http://your-server-ip/api/v1';
+    const BASE = 'https://your-domain.com/api/v1'; // TODO: 替换为你的服务器地址
     const token = wx.getStorageSync('accessToken') || '';
     return new Promise((resolve, reject) => {
       wx.request({

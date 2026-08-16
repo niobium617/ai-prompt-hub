@@ -1,6 +1,6 @@
 import { api } from '../../utils/request';
 
-const BASE_URL = 'http://your-server-ip/api/v1';
+const BASE_URL = 'https://your-domain.com/api/v1'; // TODO: 替换为你的服务器地址
 
 Page({
   data: {

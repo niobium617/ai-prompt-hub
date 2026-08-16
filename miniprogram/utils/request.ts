@@ -1,4 +1,5 @@
-const BASE_URL = 'http://your-server-ip/api/v1';
+// TODO: 替换为你的服务器地址（需 HTTPS 域名才能上线小程序）
+const BASE_URL = 'https://your-domain.com/api/v1';
 
 interface RequestOptions {
   url: string;
