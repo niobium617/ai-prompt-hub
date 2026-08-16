@@ -205,7 +205,7 @@ export class AuthService {
   private async exchangeOpenid(code: string): Promise<string> {
     const appId = this.config.get('WECHAT_APP_ID');
     const secret = this.config.get('WECHAT_APP_SECRET');
-    if (!appId || !secret || secret === 'REMOVED-SECRET') {
+    if (!appId || !secret || secret.startsWith('your-')) {
       // 仅本地开发模式允许 mock openid；生产未配置一律拒绝（防止伪造 openid 建号）
       if (process.env.DEV_MODE === 'true' && process.env.NODE_ENV !== 'production') {
         return 'dev_' + code.slice(0, 20);
